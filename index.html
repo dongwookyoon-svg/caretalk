@@ -7,7 +7,7 @@
 <meta name="description" content="요양원 신입 요양보호사가 지역 말씨를 쓰는 AI 어르신과 먼저 말해 보고, 그 연습 기록이 평가 서류가 되는 교육 도구">
 <meta name="theme-color" content="#ffffff">
 <style>
-  @font-face{font-family:"Pretendard";font-weight:45 920;font-style:normal;font-display:swap;src:url(fonts/PretendardVariable.woff2) format("woff2-variations")}
+  @font-face{font-family:"Pretendard";font-weight:45 920;font-style:normal;font-display:swap;src:url(fonts/PretendardVariable.woff2) format("woff2-variations"),url(https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2) format("woff2-variations")}
   :root{
     --bg:#F4F4F1; --card:#FFFFFF; --ink:#17191B; --sub:#50565B; --faint:#8E9195; --line:#E7E6E1; --fill:#F4F4F1;
     --brand:#24453D; --brandHover:#1B362F; --brandSoft:#EBF0ED; --brandInk:#1C3832;
@@ -624,6 +624,58 @@
 .sheet .pane.wide{width:min(820px,100%)}
 @media print{body.printing>*:not(.sheet){display:none!important}body.printing .sheet{position:static;background:none;display:block}body.printing .sheet .pane{width:100%;height:auto;padding:0;animation:none;box-shadow:none}body.printing .noprint{display:none!important}}
 .rcard.senior{border-left:4px solid #B4874A}.rcard.senior .sv{font-size:17px;line-height:1.7;color:var(--ink);margin-top:6px}.rcard.senior .svnote{font-size:13px;color:#8a8a84;margin-top:10px}
+
+  /* ===== v6 calm pass: 선 중심, 그림자·게임 요소 줄이기 ===== */
+  :root{--bg:#F6F5F2}
+  .hello,.unit,.side .card,.bcard,.profile,.chat,.rhead,.rcard,.kpi div,.panel,.stat,.done,.modal .box{box-shadow:none!important;border:1px solid var(--line);border-radius:16px}
+  .ibtn{box-shadow:none;border:1px solid var(--line)}
+  .streak{display:none!important}
+  .side .card:has(#badges),.side .card:has(.goal){display:none}
+  .field2 textarea{min-height:44px;box-sizing:border-box}
+  .rcard h2,.panel h2{letter-spacing:-.02em}
+
+  /* ===== v6: 연습 목록(스픽형), 결과(점수표형), 원장(관리자형) ===== */
+  .lgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:6px 0 18px}
+  @media(max-width:700px){.lgrid{grid-template-columns:1fr}}
+  .lcard{display:flex;flex-direction:column;gap:14px;border:1px solid var(--line);border-radius:14px;padding:18px;background:#fff;transition:border-color .2s,background .2s}
+  .lcard:hover{border-color:#CFCBC2;background:#FDFCFA}
+  .lcard .top{display:flex;gap:14px;align-items:center}
+  .lcard .top svg{border-radius:50%;flex:none}
+  .lcard h3{margin:0;font-size:17px;font-weight:700;letter-spacing:-.02em;line-height:1.35}
+  .lcard .d{font-size:13.5px;color:var(--faint);margin-top:2px}
+  .lcard .bt{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:12px;font-size:14px}
+  .lcard .bt .go{font-weight:700;color:var(--brand)}
+  .lcard .st{font-size:12.5px;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--fill);color:var(--sub)}
+  .lcard .st.ok{background:var(--brandSoft);color:var(--brandInk)}.lcard .st.re{background:var(--warmSoft);color:#7A5B2F}
+  .lcard.ai{background:#17191B;border-color:#17191B;color:#fff}.lcard.ai .d{color:#AEB3B8}.lcard.ai .bt{border-color:#33373B}.lcard.ai .bt .go{color:#E6D3AE}
+  .unit{padding:8px 24px 6px}
+  .result{max-width:1080px}
+  .rhead{display:grid;grid-template-columns:auto 1fr;column-gap:32px;text-align:left;align-items:center;padding:28px 32px}
+  .rhead .sc{grid-row:1/span 4;margin:0;width:150px;height:150px}
+  .rhead .sc svg{width:150px;height:150px}
+  .rhead p{margin:0;max-width:none}
+  .rhead .earn{justify-content:flex-start}
+  .rcols{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}
+  @media(max-width:860px){.rcols{grid-template-columns:1fr}.rhead{grid-template-columns:1fr;text-align:center}.rhead .sc{grid-row:auto;margin:0 auto 12px}}
+  .crit .c em{font-style:normal;font-size:11.5px;font-weight:700;padding:2px 6px;border-radius:5px;margin-left:6px;vertical-align:1px}
+  .crit .c em.ok{background:var(--brandSoft);color:var(--brandInk)}.crit .c em.mid{background:var(--warmSoft);color:#7A5B2F}.crit .c em.low{background:var(--alertSoft);color:var(--alert)}
+  .crit .c{grid-template-columns:150px 1fr 58px}
+  .olay{display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start}
+  @media(max-width:900px){.olay{grid-template-columns:1fr}}
+  .onav{position:sticky;top:80px;border:1px solid var(--line);border-radius:14px;background:#fff;padding:14px}
+  .onav .fac{display:flex;gap:10px;align-items:center;padding:6px 6px 14px;border-bottom:1px solid var(--line);margin-bottom:10px}
+  .onav .fac i{width:32px;height:32px;border-radius:8px;background:var(--brand);color:#fff;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .onav .fac b{font-size:14.5px;display:block;line-height:1.3}.onav .fac small{font-size:12px;color:var(--faint)}
+  .onav .ngl{font-size:12px;font-weight:700;color:var(--faint);margin:14px 8px 6px}
+  .onav .otabs{display:flex;flex-direction:column;background:none;padding:0;margin:0;gap:2px}
+  .onav .otabs button,.onav .nb{height:38px;width:100%;text-align:left;padding:0 10px;border-radius:8px;font-size:14.5px;font-weight:600;color:var(--sub);background:none;box-shadow:none}
+  .onav .otabs button.on{background:var(--fill);color:var(--ink)}
+  .onav .nb:hover,.onav .otabs button:hover{background:#F2F1EE}
+  .ohead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+  .org .kpi{margin-top:20px}
+  .wrap.org{max-width:1280px}
+  .olay>div{min-width:0}
+  #rEarn span:has(svg){display:none}
 </style>
 </head>
 <body>
@@ -636,7 +688,7 @@
     </a>
     <nav class="nav">
       <a href="#/" data-r="home" class="m-hide">소개</a>
-      <a href="#/learn" data-r="learn">학습</a>
+      <a href="#/learn" data-r="learn">연습하기</a>
       <a href="#/org" data-r="org">원장 리포트</a>
       <span class="streak" title="연속 학습일"><svg width="12" height="14" viewBox="0 0 13 15" aria-hidden="true"><path d="M6.5 0C7 3 10.5 4.5 10.5 9a4 4 0 0 1-8 0c0-2 1-3 2-4 0 1.5.8 2.4 1.5 2.4C6 6 5 3.5 6.5 0z" fill="#B4874A"/></svg><span id="streak">0</span></span>
     </nav>
@@ -894,23 +946,28 @@
       <p id="rSum">표준교재 원칙으로 채점하고 있어요. 10~20초 걸려요.</p>
       <div class="earn" id="rEarn"></div>
     </div>
-    <div class="rcard pilot hidden" id="rPilot"></div>
     <div id="rViol"></div>
-    <div class="rcard crit"><h2>항목별 점수</h2><div id="rCrit"></div></div>
-    <div class="rcard" id="rFb"></div>
-    <div class="rcard senior hidden" id="rSenior"></div>
-    <div class="rcard" id="rPrin"></div>
+    <div class="rcols">
+      <div><div class="rcard crit"><h2>항목별 점수</h2><div id="rCrit"></div></div><div class="rcard pilot hidden" id="rPilot"></div><div class="rcard" id="rPrin"></div></div>
+      <div><div class="rcard" id="rFb"></div><div class="rcard senior hidden" id="rSenior"></div></div>
+    </div>
     <div class="err" id="rErr" style="margin-top:10px"></div>
-    <div class="rcta"><a class="btn gray" href="#/learn">학습으로</a><button class="btn pri" id="retryBtn">다시 해 보기</button></div>
+    <div class="rcta"><a class="btn gray" href="#/learn">연습 목록으로</a><button class="btn pri" id="retryBtn">다시 해 보기</button></div>
   </div></div>
 </main>
 
 <!-- ===== ORG ===== -->
 <main id="v-org" class="hidden page">
-  <div class="wrap org">
-    <h1 id="oTitle">강원 ○○ 요양보호사교육원</h1>
-    <p class="sub" style="margin:0" id="oSub"></p>
-    <div class="otabs" id="oTabs"><button data-v="facility" class="on">원장 리포트</button><button data-v="school">선임 검토</button></div>
+  <div class="wrap org"><div class="olay">
+    <aside class="onav" aria-label="원장 메뉴">
+      <div class="fac"><i>춘</i><div><b>춘천 ○○요양원</b><small>시연용 예시 기관</small></div></div>
+      <div class="otabs" id="oTabs"><button data-v="facility" class="on">교육 현황</button><button data-v="school">선임 검토</button></div>
+      <p class="ngl">평가 서류</p>
+      <button class="nb" id="navDocNew">신규직원 교육 기록</button>
+      <button class="nb" id="navDocGuide">급여제공지침 교육 일지</button>
+    </aside>
+    <div>
+    <div class="ohead"><div><h1 id="oTitle">원장 리포트</h1><p class="sub" style="margin:0" id="oSub"></p></div><button class="btn pri sm" id="topDoc">서류 내보내기</button></div>
     <div id="oSchool" class="hidden">
       <div class="kpi"><div><b id="kN">-</b><span>이번 달 레슨</span></div><div><b id="kAvg">-</b><span>평균 점수</span></div><div><b id="kViol">-</b><span>안전수칙 위반</span></div><div><b id="kAgree">-</b><span id="kAgreeL">AI·선임 점수 일치율</span></div></div>
       <div class="og">
@@ -932,6 +989,7 @@
       </div>
       <div class="panel" style="margin-top:12px"><h2>파일럿 테스트 기록 <span class="faint" style="font-size:13.5px;font-weight:500">· 이 기기에서 한 연습만, 이름 없이</span></h2><div id="fPilot"></div></div>
     </div>
+  </div></div>
   </div>
 </main>
 
@@ -1298,16 +1356,13 @@
     const redo = low && low.total < 70 ? low.scen : null;
     const firstOpen = BASE_IDS.find(id => best(id) < 0);
     $("path").innerHTML = PATH.map(u => `
-      <section class="unit"><div class="uh"><h2>${esc(u.unit)}</h2><span>${esc(u.note)}</span></div>
+      <section class="unit"><div class="uh"><h2>${esc(u.unit)}</h2><span>${esc(u.note)}</span></div><div class="lgrid">
       ${u.items.map(id => {
-        if (id === "custom") return `<a class="les" href="#/custom"><div class="node open" style="background:var(--ink);box-shadow:0 0 0 6px #E8EBED"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8zM19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9z"/></svg></div>
-          <div><h3>나만의 상황 만들기<span class="tag new" style="background:#17191B;color:#fff">AI</span></h3><div class="d">${mine.length ? "내 약한 항목에 맞춰 AI가 새 어르신과 상황을 만들어요" : "레슨을 하나 끝내면 약한 항목에 맞춰 만들어요"}</div></div>
-          <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></a>`;
+        if (id === "custom") return `<a class="lcard ai" href="#/custom"><div class="top"><div><h3>나만의 상황 만들기</h3><div class="d">${mine.length ? "내 약한 항목에 맞춰 AI가 새 어르신과 상황을 만들어요" : "레슨을 하나 끝내면 약한 항목에 맞춰 만들어요"}</div></div></div><div class="bt"><span class="st" style="background:#33373B;color:#E6D3AE">AI</span><span class="go">만들기</span></div></a>`;
         const s = SCEN[id], b = best(s.id), done = b >= 0;
-        return `<a class="les" href="#/lesson/${s.id}"><div class="node ${done ? "done" : "open"}">${done ? b : `<svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true"><path d="M6 3.5l8 5.5-8 5.5z" fill="#fff"/></svg>`}</div>
-          <div><h3>${esc(s.title)}${redo === s.id ? '<span class="tag re">다시 연습</span>' : firstOpen === s.id ? '<span class="tag new">다음 레슨</span>' : ""}</h3><div class="d">${esc(s.name)} · ${s.age}세 · ${esc(s.home)} · 약 ${s.minutes}분</div></div>
-          <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></a>`;
-      }).join("")}</section>`).join("");
+        const st = redo === s.id ? '<span class="st re">다시 연습</span>' : done ? `<span class="st ok">최고 ${b}점</span>` : firstOpen === s.id ? '<span class="st">다음 레슨</span>' : '<span class="st">약 ' + s.minutes + '분</span>';
+        return `<a class="lcard" href="#/lesson/${s.id}"><div class="top">${face(s, 52, s.mood)}<div><h3>${esc(s.title)}</h3><div class="d">${esc(s.name)} · ${s.age}세 · ${esc(s.home)}</div></div></div><div class="bt">${st}<span class="go">${done ? "다시 하기" : "시작"}</span></div></a>`;
+      }).join("")}</div></section>`).join("");
     const nToday = mine.filter(s => new Date(s.at).toISOString().slice(0, 10) === today()).length;
     $("goalVal").textContent = Math.min(nToday, 2) + "/2";
     requestAnimationFrame(() => $("goalArc").style.strokeDashoffset = 213.6 * (1 - Math.min(nToday, 2) / 2));
@@ -1829,11 +1884,12 @@ ${transcript()}
     $("rHead").textContent = violations.length ? "안전수칙을 지키지 못했어요" : total >= 80 ? "현장에 나가도 좋아요" : total >= 60 ? "조금만 더 하면 돼요" : "한 번 더 연습해 봐요";
     $("rSum").textContent = (r.summary || "") + (st.revealed ? " 숨은 사정도 찾아냈어요." : " 숨은 사정은 아직 못 찾았어요.");
     $("rEarn").innerHTML = newB.map((b, i) => `<span style="animation-delay:${0.9 + i * 0.15}s"><svg width="16" height="16" viewBox="0 0 26 26"><circle cx="13" cy="11" r="8" fill="#B4874A"/><path d="M8 17l-2 7 7-3 7 3-2-7" fill="#9C7440"/></svg>새 배지 · ${esc(b.name)}</span>`).join("");
-    if (newB.length) setTimeout(() => toast(`배지를 받았어요: ${newB.map(b => b.name).join(", ")}`), 1300);
+    
     if (prev && !s.ai) { const d = total - prev.total; $("rEarn").insertAdjacentHTML("afterbegin", `<span style="background:var(--bg);color:var(--ink)">지난번 ${prev.total}점 → 이번 ${total}점 (${d >= 0 ? "+" : ""}${d})</span>`); }
     renderPrinciples(s);
     if (violations.length) $("rViol").innerHTML = `<div class="viol"><h2>안전수칙 위반이 있어 총점은 최대 50점이에요</h2>${violations.map(v => `<div class="quote">“${esc(v.quote)}”</div><div class="why">${esc(v.why)}</div>`).join("")}<div style="font-size:15px;color:var(--ink)">${SAFE_NOTE[s.base || s.id] || ""}</div></div>`;
-    $("rCrit").innerHTML = CRIT.map(([k, label, max]) => `<div class="c"><span>${label}</span><div class="t"><i style="${k === "safety" && violations.length ? "background:var(--alert)" : ""}" data-w="${pts[k] / max * 100}"></i></div><span class="v">${pts[k]}<span class="faint" style="font-weight:500"> / ${max}</span></span></div>`).join("");
+    const lvl = (v, m) => v / m >= .8 ? '<em class="ok">잘함</em>' : v / m >= .55 ? '<em class="mid">보통</em>' : '<em class="low">보완</em>';
+    $("rCrit").innerHTML = CRIT.map(([k, label, max]) => `<div class="c"><span>${label}${lvl(pts[k], max)}</span><div class="t"><i style="${k === "safety" && violations.length ? "background:var(--alert)" : ""}" data-w="${pts[k] / max * 100}"></i></div><span class="v">${pts[k]}<span class="faint" style="font-weight:500"> / ${max}</span></span></div>`).join("");
     setTimeout(() => document.querySelectorAll("#rCrit i").forEach((i, n) => setTimeout(() => i.style.width = i.dataset.w + "%", n * 90)), 150);
     const good = (Array.isArray(r.good) ? r.good : []).slice(0, 2), imp = (Array.isArray(r.improve) ? r.improve : []).slice(0, 3);
     let html = "";
@@ -2113,6 +2169,9 @@ JSON만 출력:
     d.addEventListener("click", (e) => { if (e.target === d || e.target.closest("[data-close]")) d.remove(); if (e.target.closest("[data-print]")) { document.body.classList.add("printing"); window.print(); setTimeout(() => document.body.classList.remove("printing"), 500); } });
   }
   $("docNew").addEventListener("click", () => openDoc("new"));
+  $("navDocNew").addEventListener("click", () => openDoc("new"));
+  $("navDocGuide").addEventListener("click", () => openDoc("guide"));
+  $("topDoc").addEventListener("click", () => openDoc("guide"));
   $("docGuide").addEventListener("click", () => openDoc("guide"));
 
   (function crewAnim() {
