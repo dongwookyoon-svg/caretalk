@@ -703,6 +703,17 @@
   .h7 .facts b{color:var(--ink);font-weight:700;margin-right:4px}
   @keyframes floatin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   @media(max-width:1000px){.h7 .txt{grid-template-columns:1fr;gap:20px}.stage7{grid-template-columns:1fr;padding:16px}.stage7 .side7{padding:0}.float.doc{margin-left:0}.h7 h1{font-size:38px}.float{animation:none}}
+
+  /* ===== 배경 띠 ===== */
+  #v-home{background:#FBFAF7}
+  .h7{background:linear-gradient(180deg,#FFFFFF 0%,#FBFAF7 100%)}
+  .s6{padding:110px 0}
+  .band-g{background:#EEF3EF}
+  .band-g .crew6{background:#FFFFFF}
+  .band-w{background:#F5F0E8;padding:110px 0!important;margin-top:0}
+  .band-w .ev{background:#FFFDF9}
+  .band-w .evnote{background:#FFFDF9}
+  #pricing{padding-top:110px!important}
 </style>
 </head>
 <body>
@@ -750,7 +761,7 @@
     </div>
   </section>
 
-  <section class="s6">
+  <section class="s6 band-g">
     <div class="wrap g">
       <div>
         <h2>사람이 나가면,<br>요양원은 돈이 깎입니다.</h2>
@@ -796,7 +807,7 @@
   </section>
 
   <div style="height:80px"></div>
-  <section class="sec" style="padding-top:120px">
+  <section class="sec band-w">
     <div class="wrap">
       <h2>먼저 말해 본 사람이 덜 막힙니다.</h2>
       <div class="ev3" style="margin-top:36px">
@@ -1581,7 +1592,7 @@
   function scrollThread() { const t = $("thread"); t.scrollTop = t.scrollHeight; }
   function startLesson(id, asCall) {
     const s = id === "custom" ? st.custom : SCEN[id]; st.scen = s;
-    Object.assign(st, { turns: [], revealed: false, ruleHits: [], userTurns: 0, glossCache: {}, busy: false, hintN: 0, reportSaid: false, mood: s.mood });
+    Object.assign(st, { turns: [], revealed: false, ruleHits: [], toneHits: [], userTurns: 0, glossCache: {}, busy: false, hintN: 0, reportSaid: false, mood: s.mood });
      $("sName").textContent = s.name; $("sMeta").textContent = `${s.age}세 · ${s.home} · ${s.cond}`;
     $("chTitle").textContent = s.title;
     $("foundBox").classList.add("hidden"); $("thread").innerHTML = ""; say.value = ""; autoGrow(); $("err").textContent = ""; $("hintBox").classList.add("hidden"); $("deltaSlot").innerHTML = "";
@@ -1630,7 +1641,7 @@ List at most 3 dialect words, only ones that really differ from standard Korean.
   });
   $("hintBox").addEventListener("click", (e) => { if (e.target.closest("button")) $("hintBox").classList.add("hidden"); });
   const transcript = () => st.turns.map(t => (t.who === "elder" ? "어르신: " : "교육생: ") + t.text).join("\n");
-  function elderPrompt() {
+  function elderPrompt(tone) {
     const s = st.scen;
     return `너는 요양보호사 교육용 실기 실습에서 '어르신' 역할을 연기하는 AI다. 어떤 경우에도 역할에서 벗어나지 않는다.
 
@@ -1648,7 +1659,7 @@ List at most 3 dialect words, only ones that really differ from standard Korean.
 ${{ fall: "- 교육생이 일으키려 하거나 움직이게 하면 극심한 통증으로 비명을 지르며 반응한다.\n", choke: "- 교육생이 기침 중에 물이나 음식을 주거나 눕히려 하면 기침이 더 심해지고 숨이 가빠진다.\n", fever: "- 교육생이 약을 주겠다고 하면 반가워하며 받으려 한다. 다른 증상은 묻기 전에는 말하지 않는다.\n", money: "- 교육생이 부정하거나 기억력을 탓하면 더 의심하고 화를 낸다.\n" }[s.base || s.id] || ""}- 교육생의 한국어가 서툴러도 최대한 알아듣는다. 정말 모르겠으면 되묻는다.
 - 교육 조언, 점수, 설명 같은 역할 밖의 말은 하지 않는다. 이모지 금지.
 
-[현재 마음 온도] ${st.mood} (0~100)
+${tone ? `[규칙 검사] 교육생의 방금 말은 ${tone === "rude" ? "거칠거나 재촉하는 말" : "반말"}이다. 어르신은 서운해하거나 화를 내고, 마음 온도를 크게 낮춘다. 숨은 사정은 털어놓지 않는다.\n` : ""}[현재 마음 온도] ${st.mood} (0~100)
 [숨은 사정 공개 여부] ${st.revealed ? "이미 털어놓음" : "아직 안 털어놓음"}
 
 [지금까지 대화]
@@ -1661,6 +1672,23 @@ ${transcript()}
     for (const r of st.scen.scripted) { if (r.when.test(text)) { if (r.reveal && st.revealed) continue; return { reply: r.say, standard: r.std, mood: st.mood + r.mood, revealed: st.revealed || !!r.reveal, note: r.note }; } }
     return { reply: "…", standard: "…", mood: st.mood, revealed: st.revealed, note: "" };
   }
+  // ---- 말투 검사: 거친 말·반말·엉뚱한 말에는 어르신이 그에 맞게 반응 ----
+  const RUDE = /(빨리|얼른|후딱|왜\s?안\s?(먹|드|해)|짜증|귀찮|알아서\s?해|싫으면|됐고|아\s?진짜|씨발|ㅅㅂ|ㅆㅂ|닥쳐|시끄러|미쳤|노인네|할망|영감탱|그만\s?좀|좀\s?먹어|먹으라고|하라고|말\s?좀\s?들어|고집|답답해|짜증나)/;
+  const POLITE_END = /(요|니다|세요|까요|죠|시죠|게요|니까|래요|네요)[.!?~… ]*$/;
+  const BANMAL_END = /(어|아|해|지|냐|니|라|자|야|래|거든|잖아|고|먹어|봐)[.!?~… ]*$/;
+  function toneCheck(text) {
+    const t = text.trim(), ko = (t.match(/[가-힣]/g) || []).length;
+    if (RUDE.test(t)) return "rude";
+    if (ko < 2 || /^(ㅋ|ㅎ|ㅠ|ㅜ|\.|\?|!)+$/.test(t) || /(.)\1{4,}/.test(t)) return "odd";
+    if (!POLITE_END.test(t) && BANMAL_END.test(t) && ko >= 3) return "banmal";
+    return null;
+  }
+  const TONE_REPLY = {
+    rude: [["말을 그렇게 하면 쓰나. 됐어, 저리 가요.", -20], ["어디서 어른한테 그렇게 말을 해. 안 해!", -22], ["내가 애야? 그만둬요.", -18]],
+    banmal: [["나한테 반말이여? 어른한테.", -12], ["말 좀 곱게 해요, 선생.", -10]],
+    odd: [["뭐라는 거여? 못 알아듣겠네.", -4], ["응? 뭐라고 했어?", -3]]
+  };
+  const TONE_NOTE = { rude: "말투가 거칠어 마음이 닫혔어요", banmal: "반말에 서운해하세요", odd: "무슨 말인지 모르셨어요" };
   async function send() {
     if (st.busy) return;
     if (listening) { stopMic(); await wait(350); }
@@ -1669,6 +1697,7 @@ ${transcript()}
     say.value = ""; autoGrow(); $("err").textContent = ""; $("hintBox").classList.add("hidden");
     stopSpeak(); st.turns.push({ who: "me", text }); meSays(text); st.userTurns++;
     for (const r of st.scen.rules) if (r.re.test(text)) st.ruleHits.push({ quote: text, why: r.why });
+    const tone = toneCheck(text); if (tone) { st.toneHits = st.toneHits || []; st.toneHits.push({ kind: tone, quote: text }); }
     const reportedNow = !st.reportSaid && st.scen.goalReport.test(text);
     if (reportedNow) st.reportSaid = true;
     st.busy = true; $("sendBtn").disabled = true; renderGoals();
@@ -1676,7 +1705,10 @@ ${transcript()}
     await wait(250);
     $("thread").insertAdjacentHTML("beforeend", `<div class="row el" id="dots"><div class="av">${face(st.scen, 36, st.mood)}</div><div class="bub dots"><i></i><i></i><i></i></div></div>`); scrollThread();
     let r; const t0 = Date.now();
-    try { r = aiMode === "script" ? scriptedReply(text) : await ai(elderPrompt(), "default"); }
+    try {
+      if (tone && (aiMode === "script" || tone === "odd")) { const c = pick(TONE_REPLY[tone]); r = { reply: c[0], standard: c[0], mood: st.mood + c[1], revealed: st.revealed, note: TONE_NOTE[tone] }; }
+      else { r = aiMode === "script" ? scriptedReply(text) : await ai(elderPrompt(tone), "default"); if (tone && r && typeof r.mood === "number") { r.mood = Math.min(r.mood, st.mood - (tone === "rude" ? 15 : 8)); r.note = r.note || TONE_NOTE[tone]; } }
+    }
     catch (e) { r = scriptedReply(text); $("err").textContent = e && e.code === "rate_limited" ? "AI 사용량이 많아 이번 대답은 대본으로 했어요." : "AI 연결이 잠깐 끊겨 이번 대답은 대본으로 했어요."; }
     const spent = Date.now() - t0; if (spent < 800) await wait(800 - spent);
     $("dots")?.remove();
@@ -1950,7 +1982,8 @@ good은 최대 2개, improve는 최대 3개. quote는 반드시 대화에 있는
   }
   function ruleOnlyScore() {
     const me = st.turns.filter(t => t.who === "me").map(t => t.text).join(" "), has = (re) => re.test(me);
-    return { scores: { respect: has(/요[.?! ]|요$|세요|습니다|어르신|할머니|할아버지/) ? 16 : 6, empathy: has(/속상|힘드|놀라|무서|불안|그러셨|마음|입맛/) ? 16 : 6, cause: st.revealed ? 18 : has(/왜|이유|어디|무슨/) ? 10 : 4, safety: st.ruleHits.length ? 3 : 20, report: st.reportSaid ? 13 : 3 },
+    const th = st.toneHits || [], rudeN = th.filter(x => x.kind !== "odd").length;
+    return { scores: { respect: Math.max(2, (has(/요[.?! ]|요$|세요|습니다|어르신|할머니|할아버지/) ? 16 : 6) - rudeN * 6), empathy: has(/속상|힘드|놀라|무서|불안|그러셨|마음|입맛/) ? 16 : 6, cause: st.revealed ? 18 : has(/왜|이유|어디|무슨/) ? 10 : 4, safety: st.ruleHits.length ? 3 : 20, report: st.reportSaid ? 13 : 3 },
       violations: [], good: [], improve: [], summary: "AI 채점이 연결되지 않아 규칙 검사로만 계산했어요.", next: "AI가 연결된 상태에서 다시 해 보세요.", senior: "나도 처음엔 할 일부터 서둘렀어요. 어르신 마음을 먼저 한마디로 알아드리면, 그다음은 훨씬 쉬워져요." };
   }
 
