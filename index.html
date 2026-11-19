@@ -883,6 +883,42 @@
   .btn.hsec:hover{background:rgba(255,248,238,.22);border-color:#FFF8EE}
   .btn.hpri:focus-visible,.btn.hsec:focus-visible{outline:3px solid #F2C894;outline-offset:3px}
   @media(max-width:520px){.hero9 .ctas .btn{width:100%}}
+
+  /* 악순환 고리 */
+  .loop9{position:relative;width:460px;height:460px;margin:0 auto;flex:none}
+  .loop9 .ring{position:absolute;inset:0;width:100%;height:100%}
+  .loop9 .ring circle{fill:none;stroke:#D6C5B2;stroke-width:2;stroke-dasharray:6 8;animation:ringflow 2.4s linear infinite}
+  @keyframes ringflow{to{stroke-dashoffset:-56}}
+  .loop9 .ar{position:absolute;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:12px solid #B89A7C}
+  .loop9 .ctr{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center}
+  .loop9 .ctr b{display:block;font-size:20px;font-weight:800;letter-spacing:-.03em;color:var(--ink)}
+  .loop9 .ctr span{font-size:14px;color:var(--sub)}
+  .loop9 .nd{position:absolute;width:184px;transform:translate(-50%,-50%);background:#FFFDF9;border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 10px 24px -14px rgba(40,28,20,.25);transition:background .45s,border-color .45s,transform .45s var(--ease),box-shadow .45s}
+  .loop9 .n1{left:230px;top:80px}.loop9 .n2{left:380px;top:230px}.loop9 .n3{left:230px;top:380px}.loop9 .n4{left:80px;top:230px}
+  .loop9 .nd em{font-style:normal;display:inline-flex;width:22px;height:22px;border-radius:50%;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:var(--fill);color:var(--sub);margin-bottom:6px;transition:.45s}
+  .loop9 .nd b{display:block;font-size:16px;font-weight:800;letter-spacing:-.02em;line-height:1.35;color:var(--ink)}
+  .loop9 .nd span{display:block;font-size:12.5px;line-height:1.45;color:var(--sub);margin-top:3px}
+  .loop9 .nd.on{background:#5B3D2A;border-color:#5B3D2A;transform:translate(-50%,-50%) scale(1.06);box-shadow:0 18px 34px -14px rgba(60,36,18,.55)}
+  .loop9 .nd.on b{color:#FFF8EE}.loop9 .nd.on span{color:#E9D8C4}.loop9 .nd.on em{background:#FFF8EE;color:#5B3D2A}
+  .loop9 .nd.bad.on{background:#A8432F;border-color:#A8432F}.loop9 .nd.bad.on em{color:#A8432F}
+  @media(max-width:560px){.loop9{transform:scale(.72);transform-origin:top left;margin:0 0 -128px}}
+  @media(prefers-reduced-motion:reduce){.loop9 .ring circle{animation:none}}
+
+  .loop9{width:520px;height:520px}
+  .loop9 .nd{width:164px;padding:13px 14px}
+  .loop9 .n1{left:260px;top:80px}.loop9 .n2{left:440px;top:260px}.loop9 .n3{left:260px;top:440px}.loop9 .n4{left:80px;top:260px}
+  .loop9 .ctr b{font-size:19px;line-height:1.3}
+  .loop9 .ctr span{display:block;margin-top:4px}
+  .band-g .g{grid-template-columns:minmax(0,1fr) auto}
+  @media(max-width:1100px){.band-g .g{grid-template-columns:1fr}}
+  @media(max-width:700px){
+    .loop9{width:auto;height:auto;transform:none;margin:0;display:flex;flex-direction:column;gap:22px}
+    .loop9 .ring,.loop9 .ar{display:none}
+    .loop9 .nd{position:relative;left:auto!important;top:auto!important;transform:none!important;width:auto}
+    .loop9 .nd:not(:last-of-type)::after{content:"↓";position:absolute;left:50%;bottom:-21px;transform:translateX(-50%);color:#B89A7C;font-weight:700}
+    .loop9 .ctr{position:static;transform:none;order:9;padding:6px 0 0}
+    .loop9 .ctr b br{display:none}
+  }
 </style>
 </head>
 <body>
@@ -943,10 +979,14 @@
         </div>
         <p class="note">출처: 장기요양급여 제공기준 고시, 보건복지부 2025 장기요양실태조사, 강원 요양보호사교육원 통화</p>
       </div>
-      <div class="crew6" id="crew">
-        <div class="hd"><span>입소자 60명 요양원의 요양보호사</span><span>기준 29명</span></div>
-        <div class="grid"><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div><div class="slot"><div class="p leaver"><svg viewBox="0 0 24 30" fill="#CDBFB1"><circle cx="12" cy="7" r="5.5"/><path d="M2 29c0-6.6 4.5-11 10-11s10 4.4 10 11z"/></svg></div></div></div>
-        <div class="status"><b id="crewN">29명</b><span id="crewS">기준 충족</span></div>
+      <div class="loop9" id="loop9" aria-label="요양원 인력의 악순환">
+        <svg class="ring" viewBox="0 0 520 520" aria-hidden="true"><circle cx="260" cy="260" r="180" /></svg><i class="ar" style="left:387px;top:133px;transform:translate(-50%,-50%) rotate(135deg)"></i><i class="ar" style="left:387px;top:387px;transform:translate(-50%,-50%) rotate(225deg)"></i><i class="ar" style="left:133px;top:387px;transform:translate(-50%,-50%) rotate(315deg)"></i><i class="ar" style="left:133px;top:133px;transform:translate(-50%,-50%) rotate(405deg)"></i>
+        
+        <div class="ctr"><b>매번 <br>같은 자리로</b><span>다시 1번으로</span></div>
+        <div class="nd n1"><em>1</em><b>연습 없이 현장에</b><span>시험은 객관식, 말해 본 적 없음</span></div>
+        <div class="nd n2"><em>2</em><b>버티지 못하고 그만둠</b><span>“사람 상대가 제일 어렵다”</span></div>
+        <div class="nd n3 bad"><em>3</em><b>급여비용 감액</b><span>2.1명당 1명 기준 미달</span></div>
+        <div class="nd n4"><em>4</em><b>선임은 더 바빠짐</b><span>신입 가르칠 시간이 없음</span></div>
       </div>
     </div>
   </section>
@@ -2408,6 +2448,14 @@ JSON만 출력:
   $("topDoc").addEventListener("click", () => openDoc("guide"));
   $("docGuide").addEventListener("click", () => openDoc("guide"));
 
+  (function loopAnim() {
+    const box = $("loop9"); if (!box) return;
+    const nds = [...box.querySelectorAll(".nd")]; let k = 0, timer = null;
+    const step = () => { nds.forEach((n, i) => n.classList.toggle("on", i === k)); k = (k + 1) % nds.length; };
+    const start = () => { if (timer) return; step(); timer = setInterval(step, 1700); };
+    if (!("IntersectionObserver" in window)) return start();
+    new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) start(); }, { threshold: .4 }).observe(box);
+  })();
   (function crewAnim() {
     const box = $("crew"); if (!box) return;
     const go = () => {
