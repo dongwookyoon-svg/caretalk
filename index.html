@@ -883,6 +883,7 @@
         <div class="field"><div class="l">어르신 고향 (말씨)</div><div class="seg regSeg"><button data-v="gangwon">강원</button><button data-v="jeolla">전라</button><button data-v="gyeongsang">경상</button><button data-v="chungcheong">충청</button></div></div>
         <div class="field"><div class="l">말씨</div><div class="seg" id="dialSeg"><button data-v="light">어르신 말투</button><button data-v="strong">말씨 조금 더</button></div></div>
         <div class="field"><div class="l">통화 중 말로 끼어들기</div><div class="seg" id="bargeSeg"><button data-v="1">켜기</button><button data-v="0">끄기 (스피커가 클 때)</button></div></div>
+        <div class="field"><div class="l">어르신 목소리</div><div style="display:flex;gap:8px"><select id="voiceSel" class="inp" style="flex:1;min-width:0"></select><button class="btn sec sm" id="voiceTest" type="button">들어 보기</button></div><p class="faint" style="font-size:12.5px;margin:6px 0 0">‘자연스러움’ 표시 목소리가 가장 사람 같아요. 마이크로소프트 엣지 브라우저에서 가장 많이 나와요.</p></div>
         <div class="field"><div class="l">장비 점검</div><div class="checks"><div><span>AI 어르신</span><span id="ckAI">확인 중</span></div><div><span>마이크</span><span id="ckMic">확인 중</span></div><div><span>어르신 목소리</span><span id="ckTTS">확인 중</span></div></div></div>
       </div>
     </aside>
@@ -1513,8 +1514,16 @@
 
   // ================= VOICE =================
   let koVoice = null;
-  function pickVoice() { try { if (koVoice) return; const vs = speechSynthesis.getVoices().filter(v => /^ko/i.test(v.lang)); const saved = store.get("ct_voice", ""); koVoice = vs.find(v => v.name === saved) || vs.find(v => /Yuna|유나/i.test(v.name)) || vs.find(v => /Google/i.test(v.name)) || vs[0] || null; if (koVoice) store.set("ct_voice", koVoice.name); } catch {} }
+  const voiceRank = (v) => (/Natural|Online|Neural/i.test(v.name) ? 0 : /Premium|Enhanced|향상|고급/i.test(v.name) ? 1 : /Yuna|유나|Sora|소라/i.test(v.name) ? 2 : /Google/i.test(v.name) ? 3 : 4);
+  function koVoices() { try { return speechSynthesis.getVoices().filter(v => /^ko/i.test(v.lang)).sort((x, y) => voiceRank(x) - voiceRank(y)); } catch { return []; } }
+  function pickVoice() { try { const vs = koVoices(); const saved = store.get("ct_voice", ""); koVoice = vs.find(v => v.name === saved) || vs[0] || null; fillVoiceSel(); } catch {} }
+  function fillVoiceSel() {
+    const sel = $("voiceSel"); if (!sel) return; const vs = koVoices();
+    sel.innerHTML = vs.length ? vs.map(v => `<option value="${esc(v.name)}"${koVoice && v.name === koVoice.name ? " selected" : ""}>${esc(v.name.replace(/Microsoft |Google |\(.*?\)/g, "").trim() || v.name)}${voiceRank(v) <= 1 ? " · 자연스러움" : ""}</option>`).join("") : '<option value="">이 브라우저에 한국어 목소리가 없어요</option>';
+  }
   if (hasWebTTS) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+  $("voiceSel").addEventListener("change", (e) => { const v = koVoices().find(x => x.name === e.target.value); if (v) { koVoice = v; store.set("ct_voice", v.name); } });
+  $("voiceTest").addEventListener("click", () => { stopSpeak(); speak("아이고, 왔어? 밥은 먹었어?"); });
   function ttsText(t) { return String(t || "").replace(/["“”'‘’]/g, "").replace(/\s*(…|\.{2,})\s*/g, ", ").replace(/,\s*,/g, ",").replace(/\s+/g, " ").replace(/^,\s*/, "").trim(); }
   let srvTTS = location.protocol.startsWith("http") ? null : false; const ttsCache = new Map(); let curAudio = null, curAudioDone = null, actx = null;
   async function speakServer(text) {
