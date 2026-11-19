@@ -1572,7 +1572,12 @@
     const key = (st.scen ? (st.scen.sex ?? LOOK[st.scen.look || st.scen.id]?.f) : 1) + "|" + text;
     if (ttsCache.has(key)) return ttsCache.get(key);
     const p = (async () => {
-      const r = await fetch("/api/tts", { method: "POST", headers: { "content-type": "application/json", "x-access-code": store.get("ct_code", "") }, body: JSON.stringify({ text, female: key[0] !== "0", mood: st.mood }) });
+      let r;
+      for (let tryN = 0; tryN < 3; tryN++) {
+        r = await fetch("/api/tts", { method: "POST", headers: { "content-type": "application/json", "x-access-code": store.get("ct_code", "") }, body: JSON.stringify({ text, female: key[0] !== "0", mood: st.mood }) });
+        if (r.ok || r.status === 404 || r.status === 501) break;
+        await wait(450 + tryN * 400);
+      }
       if (!r.ok) { if (r.status === 404 || r.status === 501) srvTTS = false; ttsCache.delete(key); return null; }
       srvTTS = true; return URL.createObjectURL(await r.blob());
     })().catch(() => { ttsCache.delete(key); return null; });
@@ -1591,10 +1596,10 @@
   async function speakParts(text) {
     const parts = (text.match(/[^.?!…]+[.?!…]*/g) || [text]).map(t => t.trim()).filter(Boolean);
     if (parts.length < 2 || srvTTS === false) return speakServer(text);
-    const urls = parts.map(p => getTtsUrl(p));
-    let ok = false;
+    let ok = false, next = getTtsUrl(parts[0]);
     for (let i = 0; i < parts.length; i++) {
-      const url = await urls[i]; if (!url) return ok || speakServer(text);
+      const url = await next; if (!url) return ok || speakServer(text);
+      next = i + 1 < parts.length ? getTtsUrl(parts[i + 1]) : null;
       await new Promise(res => { const a = new Audio(url); curAudio = a; curAudioDone = res; a.onplaying = fireStart; a.onended = res; a.onerror = res; if (callOn) lipFromAudio(a); a.play().catch(res); });
       const stopped = curAudio && curAudio.paused && curAudio.currentTime < (curAudio.duration || 1) - 0.05;
       curAudio = null; curAudioDone = null; ok = true;
