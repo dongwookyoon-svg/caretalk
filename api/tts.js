@@ -41,9 +41,27 @@ async function elVoices(key) {
   elCache = { f: env.f || await pick("female", "CT 할머니"), m: env.m || await pick("male", "CT 할아버지") };
   return elCache;
 }
+let elPremade = null;
+async function premade(key, female) {
+  if (!elPremade) {
+    const d = await fetch(`${EL}/v1/voices`, { headers: { "xi-api-key": key } }).then(r => r.ok ? r.json() : { voices: [] }).catch(() => ({ voices: [] }));
+    const pre = (d.voices || []).filter(v => v.category === "premade");
+    const by = (g) => pre.find(v => v.labels?.gender === g && /old|middle/.test(v.labels?.age || "")) || pre.find(v => v.labels?.gender === g) || pre[0];
+    elPremade = { f: by("female")?.voice_id, m: by("male")?.voice_id };
+  }
+  return female ? elPremade.f : elPremade.m;
+}
 async function elSpeak(key, text, female) {
   const v = await elVoices(key);
-  const id = female ? v.f : v.m;
+  let out = await elSay(key, text, female ? v.f : v.m);
+  // 무료 계정은 목소리 모음(라이브러리) 목소리를 API로 못 쓸 수 있음 → 기본 목소리로 대체하고 기억
+  if (out.status === 401 || out.status === 402 || out.status === 403 || out.status === 404 || out.status === 501) {
+    const alt = await premade(key, female);
+    if (alt) { const o2 = await elSay(key, text, alt); if (o2.status === 200) { if (female) v.f = alt; else v.m = alt; o2.note = "premade:" + out.status + " " + (out.err || "").slice(0, 120); return o2; } out.err = (out.err || "") + " | premade: " + o2.status + " " + (o2.err || ""); }
+  }
+  return out;
+}
+async function elSay(key, text, id) {
   if (!id) return { status: 501, err: "no_voice" };
   const r = await fetch(`${EL}/v1/text-to-speech/${id}?output_format=mp3_44100_128`, {
     method: "POST", headers: { "xi-api-key": key, "Content-Type": "application/json", accept: "audio/mpeg" },
@@ -58,7 +76,7 @@ export default async function handler(req, res) {
   if (req.method === "GET" && elKey) {
     try {
       const out = await elSpeak(elKey, "네.", true);
-      return res.status(200).json({ provider: "elevenlabs", ok: out.status === 200, status: out.status, voices: await elVoices(elKey), detail: out.err || "" });
+      return res.status(200).json({ provider: "elevenlabs", ok: out.status === 200, status: out.status, voices: await elVoices(elKey), detail: out.err || out.note || "" });
     } catch (e) { return res.status(200).json({ provider: "elevenlabs", ok: false, reason: String(e).slice(0, 200) }); }
   }
   if (req.method === "GET") {
