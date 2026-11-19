@@ -1432,6 +1432,7 @@
     $("bScene").textContent = s.situation;
     $("bGoals").innerHTML = s.goals.map((g, i) => `<li><span>${i + 1}</span>${esc(g)}</li>`).join("");
     st.pilot = { id: "p" + Date.now(), scen: id, pre: null, post: null, scores: [] };
+    ttsPrefetch(s.opening);
     document.querySelectorAll('.cscale[data-k="pre"] button').forEach(b => b.classList.remove("on"));
     show("brief");
   }
@@ -1526,17 +1527,26 @@
   $("voiceTest").addEventListener("click", () => { stopSpeak(); speak("아이고, 왔어? 밥은 먹었어?"); });
   function ttsText(t) { return String(t || "").replace(/["“”'‘’]/g, "").replace(/\s*(…|\.{2,})\s*/g, ", ").replace(/,\s*,/g, ",").replace(/\s+/g, " ").replace(/^,\s*/, "").trim(); }
   let srvTTS = location.protocol.startsWith("http") ? null : false; const ttsCache = new Map(); let curAudio = null, curAudioDone = null, actx = null;
+  let onSpeechStart = null;
+  const fireStart = () => { const f = onSpeechStart; onSpeechStart = null; if (f) try { f(); } catch {} };
+  async function getTtsUrl(text) {
+    if (srvTTS === false || aiMode === "sample") return null;
+    const key = (st.scen ? (st.scen.sex ?? LOOK[st.scen.look || st.scen.id]?.f) : 1) + "|" + text;
+    if (ttsCache.has(key)) return ttsCache.get(key);
+    const p = (async () => {
+      const r = await fetch("/api/tts", { method: "POST", headers: { "content-type": "application/json", "x-access-code": store.get("ct_code", "") }, body: JSON.stringify({ text, female: key[0] !== "0", mood: st.mood }) });
+      if (!r.ok) { if (r.status === 404 || r.status === 501) srvTTS = false; ttsCache.delete(key); return null; }
+      srvTTS = true; return URL.createObjectURL(await r.blob());
+    })().catch(() => { ttsCache.delete(key); return null; });
+    ttsCache.set(key, p);
+    return p;
+  }
+  function ttsPrefetch(raw) { try { const t = ttsText(raw); if (t) getTtsUrl(t); } catch {} }
   async function speakServer(text) {
-    if (srvTTS === false || aiMode === "sample") return false;
     try {
-      const key = (st.scen ? (st.scen.sex ?? LOOK[st.scen.look || st.scen.id]?.f) : 1) + "|" + text;
-      let url = ttsCache.get(key);
-      if (!url) {
-        const r = await fetch("/api/tts", { method: "POST", headers: { "content-type": "application/json", "x-access-code": store.get("ct_code", "") }, body: JSON.stringify({ text, female: key[0] !== "0", mood: st.mood }) });
-        if (!r.ok) { if (r.status === 404 || r.status === 501) srvTTS = false; return false; }
-        url = URL.createObjectURL(await r.blob()); ttsCache.set(key, url); srvTTS = true;
-      }
-      await new Promise(res => { const a = new Audio(url); curAudio = a; curAudioDone = res; a.onended = res; a.onerror = res; if (callOn) lipFromAudio(a); a.play().catch(res); });
+      const url = await getTtsUrl(text);
+      if (!url) return false;
+      await new Promise(res => { const a = new Audio(url); curAudio = a; curAudioDone = res; a.onplaying = fireStart; a.onended = res; a.onerror = res; if (callOn) lipFromAudio(a); a.play().catch(res); });
       curAudio = null; curAudioDone = null; return true;
     } catch { return false; }
   }
@@ -1547,12 +1557,12 @@
     if (tts) { try { await tts.speak(text, { voice: "rounded", rate: 0.92 }); return; } catch {} }
     if (hasWebTTS) {
       try {
-        speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = "ko-KR"; if (koVoice) u.voice = koVoice; u.rate = 0.9; u.pitch = 0.92; u.volume = 1;
+        speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = "ko-KR"; if (koVoice) u.voice = koVoice; u.rate = 0.9; u.pitch = 0.92; u.volume = 1; u.onstart = fireStart;
         await new Promise(res => { let done = false; const fin = () => { if (!done) { done = true; res(); } }; u.onend = fin; u.onerror = fin; setTimeout(fin, 2500 + text.length * 260); speechSynthesis.speak(u); setTimeout(() => { if (!speechSynthesis.speaking && !speechSynthesis.pending) fin(); }, 1200); });
         return;
       } catch {}
     }
-    await wait(900 + text.length * 70);
+    fireStart(); await wait(900 + text.length * 70);
   }
   function stopSpeak() { try { curAudio && curAudio.pause(); } catch {} try { curAudioDone && curAudioDone(); } catch {} try { tts && tts.stop(); } catch {} try { hasWebTTS && speechSynthesis.cancel(); } catch {} }
   function setListening(on) { listening = on; $("micBtn").classList.toggle("rec", on); $("micState").textContent = on ? "듣고 있어요. 다 말하면 한 번 더 누르세요" : ""; }
@@ -1836,10 +1846,11 @@ ${transcript()}
   }
   async function callSpeak(text, std) {
     $("cLine").textContent = text; $("cStd").textContent = "표준어 · " + (std || text);
-    $("cFace").classList.remove("nod"); $("cFace").classList.add("talking"); callState("speak"); interrupted = false;
-    lipStart(); bargeArm();
+    interrupted = false; $("cFace").classList.add("nod"); callState("think", "말씀하시려고 해요…");
+    onSpeechStart = () => { if (!callOn) return; $("cFace").classList.remove("nod"); $("cFace").classList.add("talking"); callState("speak"); lipStart(); bargeArm(); };
     await speak(text);
-    $("cFace").classList.remove("talking"); lipStop(); bargeDisarm();
+    onSpeechStart = null;
+    $("cFace").classList.remove("talking", "nod"); lipStop(); bargeDisarm();
     if (!callOn || interrupted) { interrupted = false; return; }
     if (st.userTurns >= MAX_TURNS) { callState("done"); return; }
     if (callAuto && hasMic()) callListen(); else callState("idle");
