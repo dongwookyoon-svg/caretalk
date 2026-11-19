@@ -1576,7 +1576,7 @@
       for (let tryN = 0; tryN < 3; tryN++) {
         r = await fetch("/api/tts", { method: "POST", headers: { "content-type": "application/json", "x-access-code": store.get("ct_code", "") }, body: JSON.stringify({ text, female: key[0] !== "0", mood: st.mood }) });
         if (r.ok || r.status === 404 || r.status === 501) break;
-        await wait(450 + tryN * 400);
+        await wait(250 + tryN * 300);
       }
       if (!r.ok) { if (r.status === 404 || r.status === 501) srvTTS = false; ttsCache.delete(key); return null; }
       srvTTS = true; return URL.createObjectURL(await r.blob());
@@ -1594,12 +1594,14 @@
     } catch { return false; }
   }
   async function speakParts(text) {
-    const parts = (text.match(/[^.?!…]+[.?!…]*/g) || [text]).map(t => t.trim()).filter(Boolean);
-    if (parts.length < 2 || srvTTS === false) return speakServer(text);
-    let ok = false, next = getTtsUrl(parts[0]);
+    const sents = (text.match(/[^.?!…]+[.?!…]*/g) || [text]).map(t => t.trim()).filter(Boolean);
+    if (sents.length < 2 || srvTTS === false) return speakServer(text);
+    // 무료 플랜은 동시 요청 2개까지: 첫 문장과 나머지를 두 덩어리로 동시에 받는다
+    const parts = [sents[0], sents.slice(1).join(" ")];
+    const urls = parts.map(p => getTtsUrl(p));
+    let ok = false;
     for (let i = 0; i < parts.length; i++) {
-      const url = await next; if (!url) return ok || speakServer(text);
-      next = i + 1 < parts.length ? getTtsUrl(parts[i + 1]) : null;
+      const url = await urls[i]; if (!url) return ok || speakServer(i ? parts[1] : text);
       await new Promise(res => { const a = new Audio(url); curAudio = a; curAudioDone = res; a.onplaying = fireStart; a.onended = res; a.onerror = res; if (callOn) lipFromAudio(a); a.play().catch(res); });
       const stopped = curAudio && curAudio.paused && curAudio.currentTime < (curAudio.duration || 1) - 0.05;
       curAudio = null; curAudioDone = null; ok = true;
