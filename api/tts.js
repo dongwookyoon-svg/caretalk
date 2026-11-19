@@ -23,7 +23,23 @@ async function elVoices(key) {
   const h = { "xi-api-key": key };
   const mine = await fetch(`${EL}/v1/voices`, { headers: h }).then(r => r.ok ? r.json() : { voices: [] }).catch(() => ({ voices: [] }));
   const have = (n) => (mine.voices || []).find(v => v.name === n)?.voice_id;
+  const SAMPLE = "아이고, 왔나. 오늘은 밥 생각이 통 없다. 새로 한 이가 잇몸을 자꾸 찔러서 씹을 수가 있어야지. 니는 밥은 묵었나? 날이 추운데 옷 따뜻하게 입고 다니래이. 내는 괜찮다, 걱정 말고 니 일 봐라.";
+  const DESC = {
+    female: "A warm, frail Korean grandmother in her mid 80s. Soft, slightly raspy and breathy elderly voice, slow gentle pace, speaking Korean naturally.",
+    male: "A calm Korean grandfather in his mid 80s. Low, slightly hoarse elderly voice with a slow pace, speaking Korean naturally."
+  };
+  async function design(gender, name) {
+    const d = await fetch(`${EL}/v1/text-to-voice/design`, { method: "POST", headers: { ...h, "Content-Type": "application/json" }, body: JSON.stringify({ voice_description: DESC[gender], text: SAMPLE, model_id: "eleven_multilingual_ttv_v2" }) });
+    if (!d.ok) { elCache && (elCache.err = "design " + d.status); return null; }
+    const j = await d.json(); const gid = j.previews?.[0]?.generated_voice_id; if (!gid) return null;
+    const c = await fetch(`${EL}/v1/text-to-voice`, { method: "POST", headers: { ...h, "Content-Type": "application/json" }, body: JSON.stringify({ voice_name: name, voice_description: DESC[gender], generated_voice_id: gid }) });
+    if (!c.ok) return null;
+    return (await c.json()).voice_id || null;
+  }
   async function pick(gender, name) {
+    const dn = name + " 디자인";
+    if (have(dn)) return have(dn);
+    try { const v = await design(gender, dn); if (v) return v; } catch {}
     if (have(name)) return have(name);
     for (const age of ["old", "middle_aged"]) {
       const q = new URLSearchParams({ page_size: "30", language: "ko", gender, age });
@@ -73,7 +89,7 @@ async function elSay(key, text, id) {
 export default async function handler(req, res) {
   const key = process.env.TYPECAST_API_KEY;
   const elKey = process.env.ELEVENLABS_API_KEY;
-  if (req.method === "GET" && elKey && !key) {
+  if (req.method === "GET" && elKey && (!key || (req.query && req.query.el))) {
     try {
       const out = await elSpeak(elKey, "네.", true);
       return res.status(200).json({ provider: "elevenlabs", ok: out.status === 200, status: out.status, voices: await elVoices(elKey), detail: out.err || out.note || "" });
