@@ -795,6 +795,56 @@
   .s6:not(.band-g){background:#FFFDF9}
   .contact{border-color:var(--line)}
   @media(max-width:900px){.hero8 h1{font-size:40px}.hero8{padding-bottom:64px;min-height:560px}.demo8 .dh{grid-template-columns:1fr;gap:16px}.demo8 h2,.s6 h2{font-size:32px}.demo8 .stage7{grid-template-columns:1fr}.demo8 .side7{padding-top:0}.quote8 .pq{font-size:28px}.demo8,.quote8,.s6{padding:80px 0}}
+
+  /* ===== v9: 영상통화가 첫 화면 ===== */
+  .hero9{background:#1B1612;color:#F5F0E8;padding:80px 0 104px}
+  .h9{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:72px;align-items:center}
+  .hero9 h1{font-size:56px;line-height:1.2;font-weight:800;letter-spacing:-.045em;margin:0 0 24px;color:#FBF7F1}
+  .hero9 .lead{font-size:18px;line-height:1.75;color:#B9AC9F;margin:0 0 36px;max-width:25em}
+  .hero9 .ctas{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+  .call9 .cv{position:relative;border-radius:28px;overflow:hidden;background:radial-gradient(80% 70% at 50% 35%,#F3EBE0 0%,#E6DACB 100%);aspect-ratio:16/11}
+  .cface{position:absolute;left:0;right:0;bottom:-6px;display:flex;justify-content:center}
+  .cface svg{width:58%!important;height:auto!important}
+  .ctop{position:absolute;top:18px;left:20px;right:20px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:#3F2A1C;z-index:2}
+  .ctop .live{width:8px;height:8px;border-radius:50%;background:#C0533F;box-shadow:0 0 0 4px rgba(192,83,63,.15)}
+  .ctop .mt{margin-left:auto;background:rgba(255,253,249,.85);padding:6px 12px;border-radius:999px;font-weight:600}
+  .ctop .mt b{transition:color .4s}
+  .cself{position:absolute;right:18px;top:58px;width:78px;height:100px;border-radius:14px;background:linear-gradient(180deg,#4A3A2E,#2E241D);color:#D8CBBE;font-size:12.5px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;z-index:2;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+  .csub{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);background:rgba(27,22,18,.82);color:#FBF7F1;font-size:19px;font-weight:600;line-height:1.45;padding:12px 22px;border-radius:14px;max-width:84%;text-align:center;z-index:3;letter-spacing:-.01em}
+  .csub.me{background:rgba(255,253,249,.92);color:#2A1D14}
+  .cq{margin-top:20px}
+  .cql{font-size:14px;color:#8F8276;margin:0 0 10px}
+  #h9Q{display:grid;gap:8px}
+  #h9Q .qbtn{display:block;width:100%;text-align:left;background:#251E19;color:#EDE4D9;border:1px solid #382D25;border-radius:12px;padding:14px 18px;font-size:15.5px;font-weight:600;margin:0;transition:background .2s,border-color .2s,color .2s}
+  #h9Q .qbtn:hover{background:#2E251F;border-color:#6B4B35}
+  #h9Q .qbtn.used{background:#F5F0E8;color:#2A1D14;border-color:#F5F0E8}
+  .cres{margin-top:12px;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;padding:16px 20px;border-radius:14px;background:#251E19;border:1px solid #382D25;opacity:0;transform:translateY(6px);transition:opacity .4s var(--ease),transform .4s var(--ease);min-height:0}
+  .cres:empty{display:none}
+  .cres.on{opacity:1;transform:none}
+  .cres b{font-size:36px;font-weight:800;letter-spacing:-.03em}
+  .cres small{color:#8F8276;font-size:14px}
+  .cres p{margin:0;font-size:15px;line-height:1.55;color:#EDE4D9;font-weight:600}
+  .cres p.bt{color:#A99B8D;font-weight:500;margin-top:4px;font-size:14px}
+  .quote8{position:relative;isolation:isolate;background:#14100D url(img/hands.jpg) center 40%/cover no-repeat;padding:180px 0 120px}
+  .quote8::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(20,15,11,.35),rgba(20,15,11,.85))}
+  .quote8 .pqs{color:#B9AC9F}
+  @media(max-width:1000px){.h9{grid-template-columns:1fr;gap:40px}.hero9 h1{font-size:38px}.hero9{padding:48px 0 64px}.csub{font-size:16px}.cself{width:56px;height:72px}.quote8{padding:120px 0 80px}}
+
+  .hero9 h1{font-size:54px;word-break:keep-all}
+  .h9{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:64px}
+  .call9{border-radius:28px;overflow:hidden;background:#251E19;border:1px solid #382D25}
+  .call9 .cv{border-radius:0;aspect-ratio:16/10.5}
+  .cface{bottom:-10px}.cface svg{width:52%!important}
+  .csub{position:static;transform:none;max-width:none;border-radius:0;background:#251E19;font-size:18px;padding:18px 24px;min-height:62px;display:flex;align-items:center;justify-content:center}
+  .csub.me{background:#F5F0E8}
+  .cself{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;overflow:hidden;padding-bottom:6px}
+  .cself svg{width:46px;margin-bottom:-2px}
+  .cself span{position:absolute;left:8px;top:6px;font-size:11px}
+  .call9 .cq,.call9 .cres{margin:0 16px 16px}
+  .call9 .cq{margin-top:16px}
+  .call9 .cres{margin-top:0}
+
+  @media(max-width:1000px){.h9{grid-template-columns:1fr;gap:36px}.hero9 h1{font-size:36px}.hero9 .lead{font-size:16px}.csub{font-size:16px;padding:14px 18px}.ctop{font-size:12.5px;left:14px;right:14px;top:12px}.cself{top:48px;right:12px;width:58px;height:74px}.cself svg{width:34px}.call9 .cv{aspect-ratio:4/3.4}.cface svg{width:66%!important}#h9Q .qbtn{font-size:15px;padding:12px 14px}}
 </style>
 </head>
 <body>
@@ -817,30 +867,22 @@
 
 <!-- ===== LANDING ===== -->
 <main id="v-home" class="view">
-  <section class="hero8">
-    <div class="wrap">
-      <h1>어르신 앞에 서기 전에,<br>먼저 말해 보게 하세요.</h1>
-      <p class="lead">신입 요양보호사가 AI 어르신과 말로 연습합니다.<br>그 기록은 그대로 요양원의 교육 기록이 됩니다.</p>
-      <div class="ctas"><a class="btn hpri" href="#/learn">AI 어르신과 대화해 보기</a><a class="hlink" href="#/org">원장 리포트 보기</a></div>
-    </div>
-    <p class="credit8">사진 Thomas Griggs</p>
-  </section>
-
-  <section class="demo8">
-    <div class="wrap">
-      <div class="dh"><h2>박순자 할머니가<br>점심을 안 드십니다.</h2><p>뭐라고 말씀드릴지 하나를 골라 보세요. 할머니 마음이 바뀌고, 옆에 바로 점수가 나옵니다.</p></div>
-      <div class="stage7">
-        <div class="appwin">
-          <div class="bar"><i></i><i></i><i></i><span>식사를 거부하실 때 · 연습 중</span></div>
-          <div class="phone" aria-live="polite">
-            <div class="ph"><div id="tryAv"></div><div><div class="n">박순자 할머니</div><div class="m">84세 · 강릉 · 점심을 안 드심</div></div><div class="t">마음 온도<b id="tryTemp">30°</b></div></div>
-            <div class="body" id="tryBody"></div>
-            <div class="qr" id="tryQR"><div class="l">어떻게 대답할까요? 하나를 눌러 보세요</div></div>
-          </div>
+  <section class="hero9">
+    <div class="wrap h9">
+      <div class="h9t">
+        <h1>어르신 앞에 서기 전에,<br>먼저 말해 보게 하세요.</h1>
+        <p class="lead">신입 요양보호사가 AI 어르신과 영상통화하듯 말로 연습합니다. 그 기록은 그대로 요양원의 교육 기록이 됩니다.</p>
+        <div class="ctas"><a class="btn hpri" href="#/learn">직접 말해 보기</a><a class="hlink" href="#/org">원장 리포트 보기</a></div>
+      </div>
+      <div class="call9">
+        <div class="cv">
+          <div class="ctop"><span class="live"></span>박순자 할머니 · 84세 · 강릉<span class="mt">마음 온도 <b id="h9Temp">30°</b></span></div>
+          <div class="cface" id="h9Face"></div>
+          <div class="cself"><svg viewBox="0 0 24 30" fill="#7A6656"><circle cx="12" cy="9" r="5"/><path d="M3 30c0-6.2 4-10 9-10s9 3.8 9 10z"/></svg><span>나</span></div>
         </div>
-        <div class="side7">
-          <div class="float fb"><div class="fbp" id="tryFb"></div></div>
-        </div>
+        <div class="csub" id="h9Sub">“안 먹는다니까. 고만 치워 줘요.”</div>
+        <div class="cq"><div class="cql" id="h9L">뭐라고 대답할까요?</div><div id="h9Q"></div></div>
+        <div class="cres" id="h9Res" aria-live="polite"></div>
       </div>
     </div>
   </section>
@@ -1395,51 +1437,43 @@
     { me: "어르신, 혹시 입안이 불편하세요?", el: "그걸 어떻게 알았수. 새로 한 이가 잇몸을 찔러.", m: 64, v: "good", why: "숨은 사정을 찾았어요. 새 틀니 때문이었어요", sc: [18, 14, 19, 23, 6], better: "많이 아프셨겠어요. 간호사님께 알려서 틀니를 봐 드리게 할게요." },
     { me: "네, 그럼 치워 드릴게요.", el: "그래, 치워.", m: 24, v: "", why: "공손하지만 이유는 못 찾았어요", sc: [16, 6, 2, 20, 3], better: "치우기 전에, 왜 안 드시고 싶은지 여쭤봐도 될까요?" }
   ];
-  let tryBusy = false;
-  function tryReset() {
-    $("tryAv").innerHTML = face(SCEN.meal, 40, 30);
-    $("tryBody").innerHTML = `<div class="row el"><div class="av">${face(SCEN.meal, 36, 30)}</div><div class="bub">안 먹는다니까. 고만 치워 줘요.</div></div>`;
-    $("tryQR").innerHTML = '<div class="l">어떻게 대답할까요? 하나를 눌러 보세요</div>' + TRY.map((t, i) => `<button class="qbtn" data-i="${i}">${esc(t.me)}</button>`).join("");
-    $("tryTemp").textContent = "30°"; $("tryTemp").style.color = moodColor(30);
-    paintTryFb(null);
+  let h9Busy = false, h9Touched = false;
+  function h9Paint(m, sub) {
+    $("h9Face").innerHTML = face(SCEN.meal, 300, m, { nobg: true });
+    $("h9Temp").textContent = m + "°"; $("h9Temp").style.color = moodColor(m);
+    $("h9Sub").textContent = sub;
   }
-  function paintTryFb(t) {
-    const box = $("tryFb"); if (!box) return;
-    const tot = t ? t.sc.reduce((a, b) => a + b, 0) : null;
-    box.innerHTML = `<div class="t">표준교재 기준 채점</div><div class="tot"><b style="color:${t ? (tot >= 70 ? "var(--brand)" : tot >= 50 ? "var(--warm)" : "var(--alert)") : "var(--line)"}">${t ? tot : "--"}</b><span>/ 100</span></div>` +
-      CRIT.map(([, label, max], i) => `<div class="cr"><span>${label}</span><div class="tk"><i data-w="${t ? t.sc[i] / max * 100 : 0}"></i></div><em>${t ? t.sc[i] : "-"}</em></div>`).join("") +
-      (t ? `<div class="bt"><small>이렇게 말해 보세요</small>“${esc(t.better)}”</div>` : `<div class="bt empty">왼쪽에서 대답을 고르면, 다섯 항목 점수와 고쳐 말할 문장이 바로 나와요.</div>`);
-    requestAnimationFrame(() => box.querySelectorAll(".tk i").forEach(i => i.style.width = i.dataset.w + "%"));
+  function h9Reset() {
+    h9Paint(30, "“안 먹는다니까. 고만 치워 줘요.”");
+    $("h9Q").innerHTML = TRY.map((t, i) => `<button class="qbtn" data-i="${i}">${esc(t.me)}</button>`).join("");
+    const r = $("h9Res"); r.classList.remove("on"); r.innerHTML = "";
   }
-  $("tryQR").addEventListener("click", async (e) => {
-    const b = e.target.closest(".qbtn"); if (!b || tryBusy) return; tryBusy = true;
-    const t = TRY[+b.dataset.i]; const body = $("tryBody");
-    if (body.children.length > 1) tryReset();
-    $("tryQR").querySelectorAll(".qbtn").forEach(x => x.classList.toggle("used", x.dataset.i === b.dataset.i));
-    const body2 = $("tryBody");
-    body2.insertAdjacentHTML("beforeend", `<div class="row me"><div class="bub">${esc(t.me)}</div></div>`);
-    await wait(350);
-    body2.insertAdjacentHTML("beforeend", `<div class="row el" id="tryDots"><div class="av">${face(SCEN.meal, 36, 30)}</div><div class="bub dots"><i></i><i></i><i></i></div></div>`);
-    await wait(900);
-    $("tryDots").remove();
-    body2.insertAdjacentHTML("beforeend", `<div class="row el"><div class="av">${face(SCEN.meal, 36, t.m)}</div><div class="bub">${esc(t.el)}</div></div>`); $("tryAv").innerHTML = face(SCEN.meal, 40, t.m);
-    $("tryTemp").textContent = t.m + "°"; $("tryTemp").style.color = moodColor(t.m);
-    await wait(250);
-    const bg = t.v === "good" ? "background:var(--brandSoft);color:var(--brandInk)" : t.v === "bad" ? "background:var(--alertSoft);color:var(--alert)" : "background:#EDEFF2;color:var(--sub)";
-    body2.insertAdjacentHTML("beforeend", `<div class="verdict-line" style="${bg};font-weight:600">${esc(t.why)}</div>`);
-    $("tryQR").querySelector(".l").textContent = "다른 대답도 눌러 보세요"; paintTryFb(t);
-    tryBusy = false;
-  });
-  tryReset();
-  let tryTouched = false;
-  $("tryQR").addEventListener("pointerdown", () => { tryTouched = true; }, { capture: true });
-  (function autoDemo() {
-    const go = () => { if (tryTouched || location.hash.replace(/^#\/?/, "") !== "") return; const b = $("tryQR").querySelector('.qbtn[data-i="1"]'); if (b) b.click(); };
-    const box = $("tryBody"); if (!box) return;
-    if (!("IntersectionObserver" in window)) return setTimeout(go, 1800);
-    const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); setTimeout(go, 1600); } }, { threshold: .6 });
-    io.observe(box);
-  })();
+  if ($("h9Q")) {
+    h9Reset();
+    $("h9Q").addEventListener("pointerdown", () => { h9Touched = true; }, { capture: true });
+    $("h9Q").addEventListener("click", async (e) => {
+      const b = e.target.closest(".qbtn"); if (!b || h9Busy) return; h9Busy = true;
+      const t = TRY[+b.dataset.i];
+      $("h9Q").querySelectorAll(".qbtn").forEach(x => x.classList.toggle("used", x === b));
+      $("h9Res").classList.remove("on");
+      const sub = $("h9Sub"); sub.classList.add("me"); sub.textContent = "나: “" + t.me + "”";
+      await wait(1100);
+      sub.classList.remove("me"); sub.textContent = "…"; await wait(600);
+      h9Paint(t.m, "“" + t.el + "”");
+      const tot = t.sc.reduce((a, c) => a + c, 0);
+      const col = tot >= 70 ? "#D9B48F" : tot >= 50 ? "#C9A46A" : "#E08A78";
+      $("h9Res").innerHTML = `<div><b style="color:${col}">${tot}</b><small> / 100</small></div><div><p>${esc(t.why)}</p><p class="bt">이렇게 말해 보세요 · “${esc(t.better)}”</p></div>`;
+      await wait(150); $("h9Res").classList.add("on");
+      $("h9L").textContent = "다른 대답도 눌러 보세요";
+      h9Busy = false;
+    });
+    (function autoDemo() {
+      const go = () => { if (h9Touched || location.hash.replace(/^#\/?/, "") !== "") return; const b = $("h9Q").querySelector('.qbtn[data-i="1"]'); if (b) b.click(); };
+      if (!("IntersectionObserver" in window)) return setTimeout(go, 2200);
+      const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); setTimeout(go, 2200); } }, { threshold: .5 });
+      io.observe($("h9Face"));
+    })();
+  }
 
   // ================= LEARN =================
   function streakInfo() {
