@@ -73,7 +73,7 @@ async function elSay(key, text, id) {
 export default async function handler(req, res) {
   const key = process.env.TYPECAST_API_KEY;
   const elKey = process.env.ELEVENLABS_API_KEY;
-  if (req.method === "GET" && elKey) {
+  if (req.method === "GET" && elKey && !key) {
     try {
       const out = await elSpeak(elKey, "네.", true);
       return res.status(200).json({ provider: "elevenlabs", ok: out.status === 200, status: out.status, voices: await elVoices(elKey), detail: out.err || out.note || "" });
@@ -94,18 +94,11 @@ export default async function handler(req, res) {
   if (process.env.ACCESS_CODE && req.headers["x-access-code"] !== process.env.ACCESS_CODE) return res.status(401).json({ error: "access_code" });
   const { text, female = true, mood = 50 } = req.body || {};
   if (!text || typeof text !== "string" || text.length > 300) return res.status(400).json({ error: "text" });
-  if (elKey) {
-    try {
-      let out = await elSpeak(elKey, text, female);
-      if (out.status === 429) { await new Promise(z => setTimeout(z, 400)); out = await elSpeak(elKey, text, female); }
-      if (out.status === 200) { res.setHeader("content-type", "audio/mpeg"); res.setHeader("cache-control", "public, max-age=86400"); return res.send(out.buf); }
-      if (!key) return res.status(out.status === 401 || out.status === 402 || out.status === 403 ? 501 : 502).json({ error: "elevenlabs", status: out.status });
-    } catch (e) { if (!key) return res.status(500).json({ error: "tts_failed" }); }
-  }
-  try {
+  let tcFail = 0;
+  if (key) try {
     const v = await pickVoices(key);
     const voice_id = female ? v.f : v.m;
-    if (!voice_id) return res.status(501).json({ error: "no_voice" });
+    if (!voice_id) throw new Error("no_voice");
     const emotion = mood < 30 ? "sad" : mood > 70 ? "happy" : "normal";
     const call = (withEmotion) => fetch("https://api.typecast.ai/v1/text-to-speech", {
       method: "POST", headers: { "X-API-KEY": key, "Content-Type": "application/json" },
@@ -115,9 +108,19 @@ export default async function handler(req, res) {
     if (r.status === 400 || r.status === 422) r = await call(false);
     if (r.status === 429) { await new Promise(z => setTimeout(z, 400)); r = await call(true); }
     // 계정이 막혔거나 키가 잘못되면 501: 사이트가 바로 브라우저 목소리로 넘어가고 다시 묻지 않음
-    if (r.status === 401 || r.status === 402 || r.status === 403) return res.status(501).json({ error: "typecast_blocked", status: r.status });
-    if (!r.ok) return res.status(502).json({ error: "upstream", status: r.status });
-    res.setHeader("content-type", "audio/mpeg"); res.setHeader("cache-control", "public, max-age=86400");
-    return res.send(Buffer.from(await r.arrayBuffer()));
-  } catch (e) { return res.status(500).json({ error: "tts_failed" }); }
+    if (r.ok) {
+      res.setHeader("content-type", "audio/mpeg"); res.setHeader("cache-control", "public, max-age=86400"); res.setHeader("x-tts", "typecast");
+      return res.send(Buffer.from(await r.arrayBuffer()));
+    }
+    tcFail = r.status;
+  } catch (e) { tcFail = 500; }
+  // 타입캐스트가 안 되면 일레븐랩스로
+  if (elKey) {
+    try {
+      let out = await elSpeak(elKey, text, female);
+      if (out.status === 429) { await new Promise(z => setTimeout(z, 400)); out = await elSpeak(elKey, text, female); }
+      if (out.status === 200) { res.setHeader("content-type", "audio/mpeg"); res.setHeader("cache-control", "public, max-age=86400"); res.setHeader("x-tts", "elevenlabs"); return res.send(out.buf); }
+    } catch (e) {}
+  }
+  return res.status(tcFail === 401 || tcFail === 402 || tcFail === 403 ? 501 : 502).json({ error: "tts_failed", typecast: tcFail });
 }
