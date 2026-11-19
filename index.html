@@ -676,6 +676,33 @@
   .wrap.org{max-width:1280px}
   .olay>div{min-width:0}
   #rEarn span:has(svg){display:none}
+
+  /* ===== hero v7 ===== */
+  .h7{padding:64px 0 112px;background:#fff;overflow:hidden}
+  .h7 .g{max-width:1080px}
+  .float.fb{overflow:hidden}
+  .h7 .txt{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:end}
+  .h7 .eb{display:inline-flex;align-items:center;gap:8px;font-size:14.5px;font-weight:600;color:var(--brandInk);margin:0 0 20px}
+  .h7 .eb .dot{width:8px;height:8px;border-radius:50%;background:#3E9A72;box-shadow:0 0 0 4px #E2F1E9}
+  .h7 h1{font-size:54px;line-height:1.2;font-weight:800;letter-spacing:-.045em;margin:0}
+  .h7 .lead{font-size:18px;line-height:1.7;color:var(--sub);margin:0 0 26px}
+  .h7 .ctas{display:flex;gap:10px;flex-wrap:wrap}
+  .stage7{position:relative;margin-top:56px;padding:44px;border-radius:32px;background:radial-gradient(110% 120% at 85% 0%,#E3EEE7 0%,#F2EDE3 50%,#FAF8F4 100%);display:grid;grid-template-columns:minmax(0,600px) minmax(0,1fr);gap:28px;align-items:start}
+  .stage7 .appwin{margin:0;box-shadow:0 1px 2px rgba(0,0,0,.04),0 30px 70px rgba(28,40,34,.14)}
+  .stage7 .appwin .phone{max-width:none;margin:0;border-radius:0;box-shadow:none}
+  .stage7 .appwin .phone .body{min-height:250px}
+  .stage7 .side7{display:flex;flex-direction:column;gap:16px;padding-top:36px}
+  .float{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 44px rgba(28,40,34,.12)}
+  .float.fb{max-width:360px;animation:floatin .7s .3s var(--ease) both}
+  .float.fb .fbp{padding:20px 22px}
+  .float.doc{max-width:300px;margin-left:48px;padding:16px 18px;font-size:13px;animation:floatin .7s .5s var(--ease) both}
+  .float.doc .dt{font-weight:800;font-size:14px;margin-bottom:8px}
+  .float.doc .dr{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line);color:var(--sub)}
+  .float.doc .ok{margin-top:8px;font-weight:700;color:var(--brand)}
+  .h7 .facts{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--sub)}
+  .h7 .facts b{color:var(--ink);font-weight:700;margin-right:4px}
+  @keyframes floatin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @media(max-width:1000px){.h7 .txt{grid-template-columns:1fr;gap:20px}.stage7{grid-template-columns:1fr;padding:16px}.stage7 .side7{padding:0}.float.doc{margin-left:0}.h7 h1{font-size:38px}.float{animation:none}}
 </style>
 </head>
 <body>
@@ -697,23 +724,27 @@
 
 <!-- ===== LANDING ===== -->
 <main id="v-home" class="view">
-  <section class="h6">
-    <div class="wrap">
-      <div class="top">
-        <h1>신입 요양보호사,<br>어르신 앞에 서기 전에<br>먼저 말해 보게 하세요.</h1>
-        <p class="lead">AI 어르신과 말로 연습하고, 표준교재 기준으로 바로 피드백을 받아요. 연습한 기록은 그대로 신규직원 교육 기록이 돼요.</p>
-        <div class="ctas"><a class="btn pri" href="#/learn">AI 어르신과 대화해 보기</a><a class="btn gray" href="#/org">원장 리포트 보기</a></div>
-        <p class="meta">강원, 전라, 경상, 충청 어르신 말씨로 연습할 수 있어요.</p>
+  <section class="h7">
+    <div class="wrap g">
+      <div class="txt">
+        <div><p class="eb"><span class="dot"></span>요양원 신입 요양보호사 교육</p>
+        <h1>어르신 앞에 서기 전에,<br>먼저 말해 보게 하세요.</h1></div>
+        <div><p class="lead">AI 어르신과 말로 연습하고, 표준교재 기준으로 바로 고쳐 말해요. 연습한 기록은 그대로 신규직원 교육 기록이 돼요.</p>
+        <div class="ctas"><a class="btn pri" href="#/learn">AI 어르신과 대화해 보기</a><a class="btn gray" href="#/org">원장 리포트 보기</a></div></div>
       </div>
-      <div class="appwin">
-        <div class="bar"><i></i><i></i><i></i><span>식사를 거부하실 때 · 연습 중</span></div>
-        <div class="cols">
+      <div class="stage7">
+        <div class="appwin">
+          <div class="bar"><i></i><i></i><i></i><span>식사를 거부하실 때 · 연습 중</span></div>
           <div class="phone" aria-live="polite">
             <div class="ph"><div id="tryAv"></div><div><div class="n">박순자 할머니</div><div class="m">84세 · 강릉 · 점심을 안 드심</div></div><div class="t">마음 온도<b id="tryTemp">30°</b></div></div>
             <div class="body" id="tryBody"></div>
             <div class="qr" id="tryQR"><div class="l">어떻게 대답할까요? 하나를 눌러 보세요</div></div>
           </div>
-          <div class="fbp" id="tryFb"></div>
+        </div>
+        <div class="side7">
+          <div class="float fb"><div class="fbp" id="tryFb"></div></div>
+          <div class="float doc" aria-hidden="true"><div class="dt">급여제공지침 교육 일지</div><div class="dr"><span>노인인권보호</span><b>5/6명</b></div><div class="dr"><span>치매예방 및 관리</span><b>4/6명</b></div><div class="ok">✓ 오늘 연습이 기록됐어요</div></div>
+          <ul class="facts"><li><b>4개 지역</b>어르신 말씨</li><li><b>5개 항목</b>표준교재 채점</li><li><b>평가 서식</b>자동 정리</li></ul>
         </div>
       </div>
     </div>
