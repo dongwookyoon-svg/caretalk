@@ -921,6 +921,15 @@
   }
 
   .cface .fo{display:none}
+
+  .stats9{display:grid;gap:0;margin-top:34px;border-top:1px solid var(--line)}
+  .stats9 div{display:block!important;padding:22px 0!important;border-bottom:1px solid var(--line)}
+  .stats9 b{display:block;font-size:34px!important;font-weight:800;letter-spacing:-.035em;line-height:1.15;color:#5B3D2A!important;margin-bottom:8px}
+  .stats9 strong{display:block;font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.45}
+  .stats9 span{display:block;font-size:14px!important;color:var(--faint)!important;margin-top:3px;line-height:1.5}
+  @media(max-width:700px){.stats9 b{font-size:28px!important}}
+
+  .sheet .pane{overflow-x:auto}
 </style>
 </head>
 <body>
@@ -974,10 +983,10 @@
     <div class="wrap g">
       <div>
                 <h2>한 명이 그만두면,<br>급여비용이 깎입니다.</h2>
-        <div class="stats">
-          <div><b>2.1명당 1명</b><span>입소자 대비 요양보호사 배치 기준. 한 명만 모자라도 감액 대상</span></div>
-          <div><b>열 곳 중 일곱 곳</b><span>인력 채용이 어렵다고 답한 장기요양기관(67.2%)</span></div>
-          <div><b>“기다리거나 치운다”</b><span>신입이 배우는 식사 거부 대응의 전부</span></div>
+        <div class="stats stats9">
+          <div><b>2.1 : 1</b><strong>입소자 2.1명마다 요양보호사 1명</strong><span>한 명만 모자라도 급여비용이 깎입니다</span></div>
+          <div><b>10곳 중 7곳</b><strong>“사람 구하기가 어렵다”</strong><span>장기요양기관 67.2%, 2025 장기요양실태조사</span></div>
+          <div><b>“기다리거나 치운다”</b><strong>신입이 배우는 식사 거부 대응의 전부</strong><span>강원의 한 요양보호사교육원</span></div>
         </div>
         <p class="note">출처: 장기요양급여 제공기준 고시, 보건복지부 2025 장기요양실태조사, 강원 요양보호사교육원 통화</p>
       </div>
@@ -2469,6 +2478,7 @@ JSON만 출력:
     document.body.appendChild(d);
     d.addEventListener("click", (e) => { if (e.target === d || e.target.closest("[data-close]")) d.remove(); if (e.target.closest("[data-print]")) { document.body.classList.add("printing"); window.print(); setTimeout(() => document.body.classList.remove("printing"), 500); } });
   }
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll(".sheet").forEach(x => x.remove()); });
   $("docNew").addEventListener("click", () => openDoc("new"));
   $("navDocNew").addEventListener("click", () => openDoc("new"));
   $("navDocGuide").addEventListener("click", () => openDoc("guide"));
