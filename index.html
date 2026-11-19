@@ -756,6 +756,11 @@
   .evc p{font-size:15px;line-height:1.65;color:var(--sub);margin:0 0 18px}
   .evc span{margin-top:auto;font-size:12.5px;color:var(--faint);padding-top:14px;border-top:1px solid #EEE7DB}
   .evn{font-size:15px;color:var(--sub);margin:28px 0 8px;padding:16px 20px;background:#FFFDF9;border:1px solid #E6DED0;border-radius:12px}
+
+  /* ===== 시연 녹화 ===== */
+  .recbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;margin-right:8px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:13.5px;font-weight:700;color:var(--ink)}
+  .recbtn i{width:9px;height:9px;border-radius:50%;background:#C8423A}
+  .recbtn.on{background:#C8423A;border-color:#C8423A;color:#fff}.recbtn.on i{background:#fff;animation:pulse 1.2s infinite}
 </style>
 </head>
 <body>
@@ -767,6 +772,7 @@
       케어톡
     </a>
     <nav class="nav">
+      <button class="recbtn hidden" id="recBtn" type="button"><i></i><span>녹화</span></button>
       <a href="#/" data-r="home" class="m-hide">소개</a>
       <a href="#/learn" data-r="learn">연습하기</a>
       <a href="#/org" data-r="org">원장 리포트</a>
@@ -1390,6 +1396,15 @@
     tryBusy = false;
   });
   tryReset();
+  let tryTouched = false;
+  $("tryQR").addEventListener("pointerdown", () => { tryTouched = true; }, { capture: true });
+  (function autoDemo() {
+    const go = () => { if (tryTouched || location.hash.replace(/^#\/?/, "") !== "") return; const b = $("tryQR").querySelector('.qbtn[data-i="1"]'); if (b) b.click(); };
+    const box = $("tryBody"); if (!box) return;
+    if (!("IntersectionObserver" in window)) return setTimeout(go, 1800);
+    const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); setTimeout(go, 1600); } }, { threshold: .6 });
+    io.observe(box);
+  })();
 
   // ================= LEARN =================
   function streakInfo() {
@@ -2289,6 +2304,40 @@ JSON만 출력:
     if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return go();
     const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); setTimeout(go, 700); } }, { threshold: .55 });
     io.observe(box);
+  })();
+
+
+  // ---- 시연 녹화: 주소 뒤에 ?rec 를 붙이면 버튼이 보여요. 탭 화면 + 탭 소리 + 마이크를 함께 녹화 ----
+  (function recorder() {
+    if (!/[?&]rec\b/.test(location.search)) return;
+    const btn = $("recBtn"); btn.classList.remove("hidden");
+    let rec = null, streams = [], chunks = [], t0 = 0, timer = 0;
+    const label = (t) => btn.querySelector("span").textContent = t;
+    async function start() {
+      try {
+        const disp = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 30 }, audio: { suppressLocalAudioPlayback: false }, preferCurrentTab: true, selfBrowserSurface: "include", systemAudio: "include" });
+        streams.push(disp);
+        const ac = new (window.AudioContext || window.webkitAudioContext)(); const dest = ac.createMediaStreamDestination();
+        if (disp.getAudioTracks().length) ac.createMediaStreamSource(new MediaStream(disp.getAudioTracks())).connect(dest);
+        else toast("탭 소리가 빠졌어요. 다시 녹화할 때 ‘탭 오디오도 공유’를 켜 주세요");
+        try { const mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true } }); streams.push(mic); ac.createMediaStreamSource(mic).connect(dest); } catch {}
+        const out = new MediaStream([...disp.getVideoTracks(), ...dest.stream.getAudioTracks()]);
+        const type = ["video/mp4;codecs=avc1,mp4a.40.2", "video/webm;codecs=vp9,opus", "video/webm"].find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t)) || "";
+        rec = new MediaRecorder(out, type ? { mimeType: type, videoBitsPerSecond: 6e6 } : {});
+        chunks = []; rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+        rec.onstop = () => {
+          const ext = (rec.mimeType || "").includes("mp4") ? "mp4" : "webm";
+          const blob = new Blob(chunks, { type: rec.mimeType || "video/webm" }), a = document.createElement("a");
+          a.href = URL.createObjectURL(blob); a.download = `케어톡_시연_${new Date().toTimeString().slice(0, 5).replace(":", "")}.${ext}`; document.body.appendChild(a); a.click(); a.remove();
+          streams.forEach(s => s.getTracks().forEach(t => t.stop())); streams = []; try { ac.close(); } catch {}
+          btn.classList.remove("on"); label("녹화"); clearInterval(timer); toast("녹화 파일을 내려받았어요");
+        };
+        disp.getVideoTracks()[0].addEventListener("ended", () => rec && rec.state === "recording" && rec.stop());
+        rec.start(1000); t0 = Date.now(); btn.classList.add("on");
+        timer = setInterval(() => { const s = Math.floor((Date.now() - t0) / 1000); label(`정지 ${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`); }, 500);
+      } catch (e) { streams.forEach(s => s.getTracks().forEach(t => t.stop())); streams = []; toast("녹화를 시작하지 못했어요. 크롬이나 엣지에서 해 주세요"); }
+    }
+    btn.addEventListener("click", () => { if (rec && rec.state === "recording") rec.stop(); else start(); });
   })();
 
   // ================= INIT =================
