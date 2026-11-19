@@ -12,8 +12,18 @@ async function pickVoices(key) {
   return voiceCache;
 }
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "method" });
   const key = process.env.TYPECAST_API_KEY;
+  if (req.method === "GET") {
+    // 점검용: /api/tts 를 브라우저로 열면 타입캐스트 상태를 보여 준다
+    if (!key) return res.status(200).json({ ok: false, reason: "TYPECAST_API_KEY 환경 변수가 없음" });
+    try {
+      const v = await pickVoices(key);
+      const r = await fetch("https://api.typecast.ai/v1/text-to-speech", { method: "POST", headers: { "X-API-KEY": key, "Content-Type": "application/json" }, body: JSON.stringify({ voice_id: v.f, text: "네.", model: "ssfm-v30", language: "kor" }) });
+      const body = r.ok ? "" : (await r.text()).slice(0, 300);
+      return res.status(200).json({ ok: r.ok, typecast_status: r.status, voices: v, detail: body });
+    } catch (e) { return res.status(200).json({ ok: false, reason: String(e).slice(0, 200) }); }
+  }
+  if (req.method !== "POST") return res.status(405).json({ error: "method" });
   if (!key) return res.status(501).json({ error: "no_tts" });
   if (process.env.ACCESS_CODE && req.headers["x-access-code"] !== process.env.ACCESS_CODE) return res.status(401).json({ error: "access_code" });
   const { text, female = true, mood = 50 } = req.body || {};
@@ -23,10 +33,13 @@ export default async function handler(req, res) {
     const voice_id = female ? v.f : v.m;
     if (!voice_id) return res.status(501).json({ error: "no_voice" });
     const emotion = mood < 30 ? "sad" : mood > 70 ? "happy" : "normal";
-    const r = await fetch("https://api.typecast.ai/v1/text-to-speech", {
+    const call = (withEmotion) => fetch("https://api.typecast.ai/v1/text-to-speech", {
       method: "POST", headers: { "X-API-KEY": key, "Content-Type": "application/json" },
-      body: JSON.stringify({ voice_id, text, model: "ssfm-v30", language: "kor", prompt: { emotion_type: "preset", emotion_preset: emotion, emotion_intensity: 0.8 }, output: { audio_format: "mp3", audio_tempo: 1.12, target_lufs: -16 } })
+      body: JSON.stringify({ voice_id, text, model: "ssfm-v30", language: "kor", ...(withEmotion ? { prompt: { emotion_type: "preset", emotion_preset: emotion, emotion_intensity: 0.8 } } : {}), output: { audio_format: "mp3", audio_tempo: 1.12, target_lufs: -16 } })
     });
+    let r = await call(true);
+    if (r.status === 400 || r.status === 422) r = await call(false);
+    if (r.status === 429) { await new Promise(z => setTimeout(z, 400)); r = await call(true); }
     if (!r.ok) return res.status(502).json({ error: "upstream", status: r.status });
     res.setHeader("content-type", "audio/mpeg"); res.setHeader("cache-control", "public, max-age=86400");
     return res.send(Buffer.from(await r.arrayBuffer()));
