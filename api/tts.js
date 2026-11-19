@@ -15,7 +15,7 @@ async function pickVoices(key) {
 // ── 일레븐랩스 (ELEVENLABS_API_KEY 가 있으면 먼저 사용) ──
 // 선택: ELEVEN_VOICE_FEMALE, ELEVEN_VOICE_MALE (목소리 ID 직접 지정), ELEVEN_MODEL
 const EL = "https://api.elevenlabs.io";
-let elCache = null;
+let elCache = null, elErr = [];
 async function elVoices(key) {
   if (elCache) return elCache;
   const env = { f: process.env.ELEVEN_VOICE_FEMALE, m: process.env.ELEVEN_VOICE_MALE };
@@ -29,11 +29,15 @@ async function elVoices(key) {
     male: "A calm Korean grandfather in his mid 80s. Low, slightly hoarse elderly voice with a slow pace, speaking Korean naturally."
   };
   async function design(gender, name) {
-    const d = await fetch(`${EL}/v1/text-to-voice/design`, { method: "POST", headers: { ...h, "Content-Type": "application/json" }, body: JSON.stringify({ voice_description: DESC[gender], text: SAMPLE, model_id: "eleven_multilingual_ttv_v2" }) });
-    if (!d.ok) { elCache && (elCache.err = "design " + d.status); return null; }
-    const j = await d.json(); const gid = j.previews?.[0]?.generated_voice_id; if (!gid) return null;
+    let d, j = null;
+    for (const body of [{ voice_description: DESC[gender], text: SAMPLE, model_id: "eleven_multilingual_ttv_v2" }, { voice_description: DESC[gender], auto_generate_text: true }]) {
+      d = await fetch(`${EL}/v1/text-to-voice/design?output_format=mp3_22050_32`, { method: "POST", headers: { ...h, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      if (d.ok) { j = await d.json(); break; }
+      elErr.push("design " + d.status + " " + (await d.text()).slice(0, 160));
+    }
+    const gid = j?.previews?.[0]?.generated_voice_id; if (!gid) return null;
     const c = await fetch(`${EL}/v1/text-to-voice`, { method: "POST", headers: { ...h, "Content-Type": "application/json" }, body: JSON.stringify({ voice_name: name, voice_description: DESC[gender], generated_voice_id: gid }) });
-    if (!c.ok) return null;
+    if (!c.ok) { elErr.push("create " + c.status + " " + (await c.text()).slice(0, 160)); return null; }
     return (await c.json()).voice_id || null;
   }
   async function pick(gender, name) {
@@ -92,7 +96,7 @@ export default async function handler(req, res) {
   if (req.method === "GET" && elKey && (!key || (req.query && req.query.el))) {
     try {
       const out = await elSpeak(elKey, "네.", true);
-      return res.status(200).json({ provider: "elevenlabs", ok: out.status === 200, status: out.status, voices: await elVoices(elKey), detail: out.err || out.note || "" });
+      return res.status(200).json({ provider: "elevenlabs", ok: out.status === 200, status: out.status, voices: await elVoices(elKey), detail: out.err || out.note || "", design: elErr.slice(-4) });
     } catch (e) { return res.status(200).json({ provider: "elevenlabs", ok: false, reason: String(e).slice(0, 200) }); }
   }
   if (req.method === "GET") {
