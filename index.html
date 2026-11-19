@@ -735,6 +735,27 @@
   .photo-band .pqs{font-size:15px;color:#C9C6BF;margin:0}
   @media(max-width:700px){.photo-band{min-height:420px;padding-bottom:56px}.photo-band .pq{font-size:28px}}
   .credit-photo{display:block;margin-top:4px}
+
+  /* ===== 가독성 개편 ===== */
+  .kick{font-size:14.5px;font-weight:700;color:var(--brand);margin:0 0 14px;letter-spacing:-.01em}
+  .s6 h2{font-size:40px;line-height:1.28}
+  .stats{display:grid;gap:0;margin-top:30px;border-top:1px solid rgba(28,37,34,.12)}
+  .band-g .g{grid-template-columns:1fr 1fr;align-items:center}
+  .stats div{display:grid;grid-template-columns:190px 1fr;gap:20px;align-items:baseline;padding:18px 0;border-bottom:1px solid rgba(28,37,34,.12)}
+  .stats b{font-size:24px;font-weight:800;letter-spacing:-.03em;color:var(--ink);line-height:1.3}
+  .stats span{font-size:15px;line-height:1.55;color:var(--sub)}
+  .s6 .note{font-size:12.5px;color:var(--faint);margin-top:16px}
+  @media(max-width:700px){.stats div{grid-template-columns:1fr;gap:4px}.s6 h2{font-size:30px}}
+  .evh{font-size:40px!important;line-height:1.28!important;margin:0 0 40px!important}
+  .ev4{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:900px){.ev4{grid-template-columns:1fr}}
+  .evc{background:#FFFDF9;border:1px solid #E6DED0;border-radius:18px;padding:30px 28px;display:flex;flex-direction:column}
+  .evc b{font-size:52px;font-weight:800;letter-spacing:-.045em;line-height:1;color:var(--brand)}
+  .evc b small{font-size:26px;margin-left:2px}
+  .evc h3{font-size:18px;font-weight:700;letter-spacing:-.02em;margin:18px 0 8px;line-height:1.4}
+  .evc p{font-size:15px;line-height:1.65;color:var(--sub);margin:0 0 18px}
+  .evc span{margin-top:auto;font-size:12.5px;color:var(--faint);padding-top:14px;border-top:1px solid #EEE7DB}
+  .evn{font-size:15px;color:var(--sub);margin:28px 0 8px;padding:16px 20px;background:#FFFDF9;border:1px solid #E6DED0;border-radius:12px}
 </style>
 </head>
 <body>
@@ -792,10 +813,14 @@
   <section class="s6 band-g">
     <div class="wrap g">
       <div>
-        <h2>사람이 나가면,<br>요양원은 돈이 깎입니다.</h2>
-        <p>입소자 2.1명당 요양보호사 1명.<br>한 명만 모자라도 급여비용이 감액됩니다.</p>
-        <p>그런데 신입이 배우는 응대는<br>“기다리거나 치운다”가 전부입니다.</p>
-        <p class="note">출처: 장기요양급여 제공기준 고시, 보건복지부 2025 장기요양실태조사(인력 채용 어려움 67.2%), 강원의 한 교육원 통화</p>
+        <p class="kick">요양원의 현실</p>
+        <h2>한 명이 그만두면,<br>급여비용이 깎입니다.</h2>
+        <div class="stats">
+          <div><b>2.1명당 1명</b><span>입소자 대비 요양보호사 배치 기준. 한 명만 모자라도 감액 대상</span></div>
+          <div><b>67.2%</b><span>“사람 구하기 어렵다”고 답한 장기요양기관</span></div>
+          <div><b>“기다리거나 치운다”</b><span>신입이 배우는 식사 거부 대응의 전부</span></div>
+        </div>
+        <p class="note">출처: 장기요양급여 제공기준 고시, 보건복지부 2025 장기요양실태조사, 강원 요양보호사교육원 통화</p>
       </div>
       <div class="crew6" id="crew">
         <div class="hd"><span>입소자 60명 요양원의 요양보호사</span><span>기준 29명</span></div>
@@ -837,13 +862,14 @@
   <div style="height:80px"></div>
   <section class="sec band-w">
     <div class="wrap">
-      <h2>먼저 말해 본 사람이 덜 막힙니다.</h2>
-      <div class="ev3" style="margin-top:36px">
-        <div class="ev"><b>1.05</b><div class="l">임상수행능력 효과크기</div><p>간호대학생 시뮬레이션 실습 메타분석</p></div>
-        <div class="ev"><b>유의한 향상</b><div class="l">요양보호사 안전교육</div><p>상황을 연습한 집단이 앞섬</p></div>
-        <div class="ev"><b>r = .653</b><div class="l">안전 지식과 자신감</div><p>자신감이 안전 행동으로</p></div>
+      <p class="kick">연구가 말하는 것</p>
+      <h2 class="evh">연습해 본 사람은<br>현장에서 다릅니다.</h2>
+      <div class="ev4">
+        <div class="evc"><b>1.3<small>배</small></b><h3>‘큰 효과’ 기준보다 높은 학습 효과</h3><p>시뮬레이션 실습이 임상수행능력에 준 효과크기 1.05. 큰 효과로 보는 기준(0.8)을 넘습니다.</p><span>간호대학생 시뮬레이션 메타분석</span></div>
+        <div class="evc"><b>지식 + 수행</b><h3>둘 다 오른 요양보호사 안전교육</h3><p>낙상·감염·화재·약물 상황을 직접 연습한 집단이 안전 지식과 수행능력 모두 앞섰습니다.</p><span>요양보호사 시뮬레이션 안전교육 연구</span></div>
+        <div class="evc"><b>0.65</b><h3>자신감과 안전 행동의 강한 연결</h3><p>안전 지식이 자신감을 거쳐 행동으로 이어집니다. 케어톡이 키우는 것이 바로 이 자신감입니다.</p><span>요양보호사 안전 지식·자신감 연구 (r = .653)</span></div>
       </div>
-      <div class="evnote">케어톡 자체 효과는 강원 요양원 파일럿에서 검증합니다.</div>
+      <p class="evn">케어톡 자체의 효과는 강원 요양원 파일럿에서 연습 전후 점수와 자신감으로 검증합니다.</p>
       <p class="srcs">출처: 한국자료분석학회지 25(5) · 한국간호시뮬레이션학회지(2022) · 한국응용과학기술학회지 40(6)(2023)</p>
     </div>
   </section>
