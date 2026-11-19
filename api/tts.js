@@ -40,6 +40,8 @@ export default async function handler(req, res) {
     let r = await call(true);
     if (r.status === 400 || r.status === 422) r = await call(false);
     if (r.status === 429) { await new Promise(z => setTimeout(z, 400)); r = await call(true); }
+    // 계정이 막혔거나 키가 잘못되면 501: 사이트가 바로 브라우저 목소리로 넘어가고 다시 묻지 않음
+    if (r.status === 401 || r.status === 402 || r.status === 403) return res.status(501).json({ error: "typecast_blocked", status: r.status });
     if (!r.ok) return res.status(502).json({ error: "upstream", status: r.status });
     res.setHeader("content-type", "audio/mpeg"); res.setHeader("cache-control", "public, max-age=86400");
     return res.send(Buffer.from(await r.arrayBuffer()));
