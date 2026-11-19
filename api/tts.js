@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     const emotion = mood < 30 ? "sad" : mood > 70 ? "happy" : "normal";
     const r = await fetch("https://api.typecast.ai/v1/text-to-speech", {
       method: "POST", headers: { "X-API-KEY": key, "Content-Type": "application/json" },
-      body: JSON.stringify({ voice_id, text, model: "ssfm-v30", language: "kor", prompt: { emotion_type: "preset", emotion_preset: emotion, emotion_intensity: 0.8 }, output: { audio_format: "mp3", audio_tempo: 0.92, target_lufs: -16 } })
+      body: JSON.stringify({ voice_id, text, model: "ssfm-v30", language: "kor", prompt: { emotion_type: "preset", emotion_preset: emotion, emotion_intensity: 0.8 }, output: { audio_format: "mp3", audio_tempo: 1.12, target_lufs: -16 } })
     });
     if (!r.ok) return res.status(502).json({ error: "upstream", status: r.status });
     res.setHeader("content-type", "audio/mpeg"); res.setHeader("cache-control", "public, max-age=86400");
