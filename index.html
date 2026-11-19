@@ -1889,6 +1889,7 @@ List at most 3 dialect words, only ones that really differ from standard Korean.
 
 [반응 규칙]
 - 한 번에 1~2문장. 어르신답게 짧고 자연스럽게.
+- 교육생의 말은 음성 인식으로 받아 적은 것이라, 소리가 비슷한 다른 단어로 잘못 적혔을 수 있다(예: '어머니'가 '영원히'로). 앞뒤 맥락에서 가장 그럴듯한 뜻으로 알아듣고 반응한다. 받아쓰기 실수로 보이는 엉뚱한 단어 때문에 화내지 않는다.
 - 교육생이 존댓말로 감정을 먼저 알아주거나 이유를 부드럽게 물으면 마음이 조금씩 열린다(마음 온도 +5~+15).
 - 반말, 재촉, 강요, 무시, 어르신 말을 부정하거나 사실만 바로잡으면 서운해하거나 화를 낸다(-10~-20).
 - 숨은 사정은 조건을 만족하기 전까지 둘러댄다. 조건을 만족하면 그때 털어놓는다.
@@ -2088,8 +2089,35 @@ ${transcript()}
     const last = [...st.turns].reverse().find(t => t.who === "elder");
     callSpeak(last ? last.text : st.scen.opening, last ? last.std : st.scen.openingStd);
   }
-  function exitCall() { callOn = false; callStopListen(); stopSpeak(); clearInterval(callTimer); clearTimeout(blinkT); lipStop(); bargeRelease(); camOff(true); $("cFace").classList.remove("nod"); $("call").classList.add("hidden"); $("cFace").classList.remove("talking"); }
+  function exitCall() { callOn = false; callStopListen(); sttRelease(); stopSpeak(); clearInterval(callTimer); clearTimeout(blinkT); lipStop(); bargeRelease(); camOff(true); $("cFace").classList.remove("nod"); $("call").classList.add("hidden"); $("cFace").classList.remove("talking"); }
   function callStopListen() { try { if (dict && listening) dict.stop().catch(() => {}); } catch {} const r = callRec; callRec = null; try { r && r.abort(); } catch {} }
+  // 녹음해서 서버(Scribe)로 다시 받아 적기: 브라우저 인식이 틀린 말을 바로잡음
+  let sttStream = null, sttOK = true;
+  async function sttStart() {
+    if (!sttOK || !window.MediaRecorder || !navigator.mediaDevices) return null;
+    try {
+      if (!sttStream) sttStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+      const mt = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg"].find(t => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || "";
+      const mr = new MediaRecorder(sttStream, mt ? { mimeType: mt } : undefined); const parts = [];
+      mr.ondataavailable = (e) => e.data && e.data.size && parts.push(e.data);
+      const done = new Promise(r => { mr.onstop = () => r(new Blob(parts, { type: mr.mimeType || mt || "audio/webm" })); });
+      mr.start(250); return { mr, done };
+    } catch { return null; }
+  }
+  async function sttFinish(h) {
+    if (!h) return "";
+    try { if (h.mr.state !== "inactive") h.mr.stop(); } catch {}
+    const blob = await Promise.race([h.done, wait(1500).then(() => null)]); if (!blob || blob.size < 3000) return "";
+    try {
+      const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 5000);
+      const r = await fetch("/api/stt", { method: "POST", headers: { "content-type": blob.type || "audio/webm", "x-access-code": store.get("ct_code", "") }, body: blob, signal: ctl.signal });
+      clearTimeout(to);
+      if (r.status === 404 || r.status === 501) { sttOK = false; return ""; }
+      if (!r.ok) return "";
+      const j = await r.json(); return String(j.text || "").replace(/\(.*?\)/g, "").trim();
+    } catch { return ""; }
+  }
+  function sttRelease() { if (sttStream) sttStream.getTracks().forEach(t => t.stop()); sttStream = null; }
   // 말이 끝나면(1.1초 조용하면) 바로 넘김. 마이크를 눌러 끝내도 들은 말은 버리지 않음
   function callFinishListen() { const r = callRec; if (!r) return callState("idle"); try { r.stop(); } catch { callState("idle"); } }
   function callListen() {
@@ -2101,6 +2129,7 @@ ${transcript()}
       const R = window.SpeechRecognition || window.webkitSpeechRecognition;
       const rec = new R(); callRec = rec; rec.lang = "ko-KR"; rec.interimResults = true; rec.continuous = true; rec.maxAlternatives = 1;
       let finalText = "", interim = "", lastAt = 0, err = "";
+      const recP = sttStart();
       const wd = setInterval(() => {
         if (callRec !== rec) return clearInterval(wd);
         if (lastAt && performance.now() - lastAt > 1100) { clearInterval(wd); try { rec.stop(); } catch {} }
@@ -2116,7 +2145,12 @@ ${transcript()}
         clearInterval(wd);
         if (callRec !== rec) return; callRec = null;
         const t = (finalText + " " + interim).replace(/\s+/g, " ").trim();
-        if (t) return callHeard(t);
+        if (t) {
+          $("cMe").textContent = "나: " + t + "  · 정확히 받아 적는 중";
+          callState("think", "말씀을 정확히 받아 적고 있어요…");
+          return recP.then(sttFinish).then(fix => { if (!callOn) return; const use = fix && fix.length >= 2 ? fix : t; $("cMe").textContent = "나: " + use; callHeard(use); });
+        }
+        recP.then(h => { try { h && h.mr.state !== "inactive" && h.mr.stop(); } catch {} });
         if (!callOn || st.busy) return;
         if (err === "not-allowed" || err === "service-not-allowed") { callState("idle", "마이크 권한을 허용해 주세요. 키보드로도 대답할 수 있어요"); $("cKbd").classList.remove("hidden"); }
         else if (err === "network") { callState("idle", "음성 인식 연결이 끊겼어요. 다시 누르거나 키보드로 적어 주세요"); $("cKbd").classList.remove("hidden"); }
