@@ -47,6 +47,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model,
         max_tokens: tier === "complex" ? 1800 : 600,
+        output_config: { effort: tier === "complex" ? "medium" : "low" },
         system: "Reply with exactly one valid JSON object and nothing else. No markdown fences.",
         messages: [{ role: "user", content: prompt }]
       })
